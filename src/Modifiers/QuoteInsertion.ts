@@ -3,8 +3,8 @@ class QuoteInsertion extends Modifier {
     private static QuoteCharacter: Char = new String("\"") as Char;
     private static AcceptableSuccessionChars: RegExp = /^[a-z0-9\-\/]$/i;
 
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
     }
 
 

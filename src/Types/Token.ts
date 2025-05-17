@@ -9,11 +9,13 @@ class Token {
     private ContextMenu: HTMLMenuElement;
     private ClickHandler: (evt:Event) => void;
     private TokenTypes: Record<string, string>;
+    public HasValue: boolean;
 
-    constructor(TokenContent: Char[]) {
+    constructor(TokenContent: Char[], HasValue: boolean = false) {
         this.TokenContent = this.TokenContentOriginal = TokenContent;
         this.Type = "argument";
         this.TokenTypes = {}
+        this.HasValue = HasValue;
         Array.from(document.querySelector('menu').children).forEach((x: HTMLLIElement) => this.TokenTypes[x.dataset.type] = x.innerText);
     }
 
@@ -46,8 +48,10 @@ class Token {
 
     public SetContent(Content: Char[], OutputOnly: boolean = true): void {
         this.TokenContent = Content;
-        if (this.OutputElement)
+        if (this.OutputElement){
             this.OutputElement.textContent = this.TokenContent.join('');
+            this.OutputElement.className = this.TokenContent.length > 0 ? '' : 'hidden';
+        }
         if (!OutputOnly && this.ConfigElement)
             this.ConfigElement.textContent = this.OutputElement.textContent;
     }

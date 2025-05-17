@@ -3,8 +3,8 @@
 class Sed extends Modifier {
     private readonly SedStatements: SedStatement[];
 
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string, SedStatements: string) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, SedStatements: string) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
         this.SedStatements = [];
         if (!SedStatements)
             throw Error("No sed statements string provided")

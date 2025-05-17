@@ -1,1 +1,9 @@
-{"command":[{"command":"whoami"},{"argument":"/user"},{"argument":"/fo"},{"value":"list"}],"modifiers":{"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.1",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"whoami"},{"argument":"/user"},{"argument":"/fo"},{"value":"list"}],"modifiers":{"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"}}}}
+    ]
+}

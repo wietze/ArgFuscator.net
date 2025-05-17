@@ -1,1 +1,9 @@
-{"command": [{"command": "tasklist"}, {"argument": "/fi"}, {"path": "\"IMAGENAME eq process.exe\""}, {"argument": "/FO"}, {"value": "csv"}, {"argument": "/NH"}], "modifiers": {"RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.1",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command": [{"command": "tasklist"}, {"argument": "/fi"}, {"path": "\"IMAGENAME eq process.exe\""}, {"argument": "/FO"}, {"value": "csv"}, {"argument": "/NH"}], "modifiers": {"RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}}
+    ]
+}

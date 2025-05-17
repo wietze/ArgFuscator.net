@@ -1,1 +1,9 @@
-{"command": [{"command": "secedit"}, {"argument": "/export"}, {"argument": "/areas"}, {"value": "SECURITYPOLICY"}, {"argument": "/cfg"}, {"path": "c:\\windows\\temp\\out2.txt"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": false, "SubstituteSlashes": false, "ExtraSlashes": true, "AppliesTo": ["path", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.1",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command": [{"command": "secedit"}, {"argument": "/export"}, {"argument": "/areas"}, {"value": "SECURITYPOLICY"}, {"argument": "/cfg"}, {"path": "c:\\windows\\temp\\out2.txt"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": false, "SubstituteSlashes": false, "ExtraSlashes": true, "AppliesTo": ["path", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}}
+    ]
+}

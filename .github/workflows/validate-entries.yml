@@ -1,0 +1,17 @@
+name: Validate Entries
+on:
+ push
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Prepare python
+        run: |
+          python3 -m pip install .github/workflows/requirements.txt
+      - name: Validate YAML files
+        run:  |
+          python3 .github/workflows/yaml-model.py

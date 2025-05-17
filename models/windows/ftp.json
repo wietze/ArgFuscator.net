@@ -1,1 +1,9 @@
-{"command": [{"command": "ftp"}, {"argument": "-v"}, {"argument": "-A"}, {"argument": "-s:"}, {"path": "c:\\windows\\temp\\ftp_commands.txt"}, {"url": "127.0.0.1"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["command", "path"]}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.3085",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command": [{"command": "ftp"}, {"argument": "-v"}, {"argument": "-A"}, {"argument": "-s:"}, {"path": "c:\\windows\\temp\\ftp_commands.txt"}, {"url": "127.0.0.1"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["command", "path"]}}}}
+    ]
+}

@@ -3,20 +3,21 @@ layout: general
 description: See all supported executables on __SITE__.
 ---
 {% capture program %}{%include name page=page%}{% endcapture -%}
-    <h1>{{ program }}</h1>
-    It was found that <code>{{ program }}</code> command lines can be obfuscated with the following techniques:
-    <ul>
-        {% for item in site.mapping -%}
-        {%- assign x = item[0] -%}
-        {%- assign details = page.modifiers[x] -%}
-        {%- if details -%}
-        <li>
-            <strong>{{ item[1].name }}</strong>: {{ item[1].description }}
+<h1>{{ program }}</h1>
+It was found that <code>{{ program }}</code> command lines can be obfuscated with the following techniques:
+<ul>
+    {% for item in site.mapping -%}
+    {%- assign x = item[0] -%}
+    {%- assign details = page.modifiers[x] -%}
+    {%- if details -%}
+    <li>
+        <strong>{{ item[1].name }}</strong>: {{ item[1].description }}
         {%- assign options = "" %}{% for argument in page.command offset:1%}{%for breakdown in argument%}{%if details.AppliesTo contains breakdown[0]%}{% assign options = options | append:breakdown[1] | append:"||"%}{%endif%}{%endfor%}{%endfor%}{% assign testcase = options | split: "||" | where_exp:'a','a' | sample %}
-            <div class="collapsed">Example: <code>{{ testcase }}</code> is functionally equivalent to <code data-process="{{x}}">{{ testcase }}</code></div></li>
-        {% endif -%}
-        {%- endfor -%}
-    </ul>
+        <div class="collapsed">Example: <code>{{ testcase }}</code> is functionally equivalent to <code data-process="{{x}}">{{ testcase }}</code></div>
+    </li>
+    {% endif -%}
+    {%- endfor -%}
+</ul>
 </section>
 <script src="{{'/assets/js/lolbas.js' | relative_url }}" async></script>
 <section>
@@ -49,8 +50,11 @@ description: See all supported executables on __SITE__.
             <legend>Options</legend>
             <div>
                 <div id="options-panel">
+                    <menu class="context-menu" id="menu-profiles" aria-labelledby="button-template" tabindex="-1" role="listbox">
+                    </menu>
                     <div class="picker">
                         <div class="button-selection">
+                            <a class="button" id="button-profile" aria-haspopup="listbox" aria-expanded="false" role="combobox" tabindex="3" aria-controls="menu-profiles"><strong>Selected profile</strong>: <span id="profile-selected">(none)</span></a>
                             <a class="button" id="download-config" download="config-export.json" data-visit-click="JSON-Download-entry"><strong>Download config</strong></a>
                             <a class="button" id="reset-form"><strong>Reset</strong></a>
                         </div>
@@ -63,7 +67,7 @@ description: See all supported executables on __SITE__.
 </section>
 <section>
     <h2>Related</h2>
-    <div id="related-links" class="button-selection"><a href="https://ss64.com/nt/{{ program | replace:".exe", "" }}.html" class="button" target="_blank">Documentation for {{ program }}</a><a href="{{'/' | relative_url }}" class="button">More obfuscation techniques</a></div>
+    <div id="related-links" class="button-selection"><a href="https://ss64.com/nt/{{ program | replace:" .exe", "" }}.html" class="button" target="_blank">Documentation for {{ program }}</a><a href="{{'/' | relative_url }}" class="button">More obfuscation techniques</a></div>
 </section>
 <section>
     {% include faqs.html %}

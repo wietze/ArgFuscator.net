@@ -1,1 +1,1 @@
-{{- include.page.command[0]['command'] | downcase | split:'\' | last | remove:'"' | remove:".exe" -}}{%if include.page.url contains '/windows/'  %}.exe{%endif%}
+{{- include.page.profiles[0].parameters.command[0]['command'] | downcase | split:'\' | last | remove:'"' | remove:".exe" -}}{%if include.page.url contains '/windows/'  %}.exe{%endif%}

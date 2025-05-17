@@ -3,8 +3,8 @@
 class OptionCharSubstitution extends Modifier {
     private OutputOptionChars: Char[];
 
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string, OutputOptionChars: string | null) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, OutputOptionChars: string | null) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
         if (OutputOptionChars == null || OutputOptionChars.length == 0)
             throw Error(`Unexpected OutputOptionChars length (expecting at least 1, found ${OutputOptionChars?.length})`);
 

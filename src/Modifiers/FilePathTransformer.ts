@@ -9,8 +9,8 @@ class FilePathTransformer extends Modifier {
     private ExtraSlashes: boolean;
     private readonly Keywords: string[] = ["debug", "system32", "compile", "winsxs", "temp", "update"];
 
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string, PathTraversal: boolean, SubstituteSlashes: boolean, ExtraSlashes: boolean) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, PathTraversal: boolean, SubstituteSlashes: boolean, ExtraSlashes: boolean) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
 
         this.PathTraversal = PathTraversal;
         this.SubstituteSlashes = SubstituteSlashes;

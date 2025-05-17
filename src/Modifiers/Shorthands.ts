@@ -1,4 +1,4 @@
-@Modifier.AddArgument("ShorthandCommands", "textarea", "Commands that can be shortened", "Enter ALL commands that can be shortened here (comma separated).\ne.g. enter 'test' if 'tes', 'te', 't' are also accepted.\nShould there be commands that start with the same letters, this will be taken into account when generating alternatives.")
+//@Modifier.AddArgument("ShorthandCommands", "textarea", "Commands that can be shortened", "Enter ALL commands that can be shortened here (comma separated).\ne.g. enter 'test' if 'tes', 'te', 't' are also accepted.\nShould there be commands that start with the same letters, this will be taken into account when generating alternatives.")
 @Modifier.AddArgument("CaseSensitive", "checkbox", "Case sensitive", "")
 @Modifier.Register("Shorthands", "Allow certain commands to be shortened.", ['argument'])
 class Shorthands extends Modifier {
@@ -17,12 +17,17 @@ class Shorthands extends Modifier {
         return result
     }
 
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string, ShorthandCommands: string, CaseSensitive: boolean) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, CaseSensitive: boolean) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
+
+        if(Arguments?.length == 0)
+            logUserError("arguments-error", `Cannot apply Shorthands modifier: no known command-line arguments specified.`, true);
 
         try {
             let This = this;
-            let commands = new Set(ShorthandCommands.split(Shorthands.Separator).map(x => Shorthands.NormaliseArgument(x, CaseSensitive)));
+
+            let args = Arguments.map(x => x.Arguments).flat()
+            let commands = new Set(args.map(x => Shorthands.NormaliseArgument(x, CaseSensitive)));
             this.CaseSensitive = CaseSensitive;
 
             commands.forEach(command => {

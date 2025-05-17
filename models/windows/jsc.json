@@ -1,1 +1,9 @@
-{"command":[{"command":"c:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\jsc.exe"},{"argument":"/target:"},{"value":"exe"},{"argument":"/out:"},{"path":"c:\\windows\\temp\\file.exe"},{"path":"c:\\windows\\temp\\file.js"}],"modifiers":{"Sed":{"AppliesTo":["argument"],"Probability":"0.5","SedStatements":"s/target/t/i\ns/debug/d/i\ns/reference/r/i\ns/link/l/i\ns/resource/res/i\ns/linkresource/linkres/i\ns/warn/w/i\ns/optimize/o/i\ns/define/d/i\ns/main/m/i"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "14.00.9032",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"c:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\jsc.exe"},{"argument":"/target:"},{"value":"exe"},{"argument":"/out:"},{"path":"c:\\windows\\temp\\file.exe"},{"path":"c:\\windows\\temp\\file.js"}],"modifiers":{"Sed":{"AppliesTo":["argument"],"Probability":"0.5","SedStatements":"s/target/t/i\ns/debug/d/i\ns/reference/r/i\ns/link/l/i\ns/resource/res/i\ns/linkresource/linkres/i\ns/warn/w/i\ns/optimize/o/i\ns/define/d/i\ns/main/m/i"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"}}}}
+    ]
+}

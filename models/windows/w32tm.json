@@ -1,1 +1,9 @@
-{"command":[{"command":"w32tm"},{"argument":"/ntpte"},{"value":"1234567890"}],"modifiers":{"RandomCase":{"AppliesTo":["argument"],"Probability":"0.5"},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.1",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"w32tm"},{"argument":"/ntpte"},{"value":"1234567890"}],"modifiers":{"RandomCase":{"AppliesTo":["argument"],"Probability":"0.5"},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"}}}}
+    ]
+}

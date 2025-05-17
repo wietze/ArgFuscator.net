@@ -12,8 +12,8 @@ class UrlTransformer extends Modifier {
     private PathTraversal: boolean;
     private readonly Keywords: string[] = ["debug", "system32", "compile", "winsxs", "temp", "update"];
 
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string, LeaveOutProtocol: boolean, LeaveOutDoubleSlashes: boolean, SubstituteSlashes: boolean, IpToHex: boolean, PathTraversal: boolean) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, LeaveOutProtocol: boolean, LeaveOutDoubleSlashes: boolean, SubstituteSlashes: boolean, IpToHex: boolean, PathTraversal: boolean) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
 
         this.Probability = Modifier.ParseProbability(Probability);
 

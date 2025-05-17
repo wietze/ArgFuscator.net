@@ -1,1 +1,9 @@
-{"command":[{"command":"icacls.exe"},{"path":"c:\\windows\\temp\\file.ext"},{"argument":"/grant"},{"value":"everyone:"},{"value":"f"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","path","url","value","argument"],"Probability":"0.5"}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.1",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"icacls.exe"},{"path":"c:\\windows\\temp\\file.ext"},{"argument":"/grant"},{"value":"everyone:"},{"value":"f"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","path","url","value","argument"],"Probability":"0.5"}}}}
+    ]
+}

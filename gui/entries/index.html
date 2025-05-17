@@ -9,12 +9,20 @@ For a comparison of the obfuscation capabilities per executable, see <a href="{{
 
 <ul class="dynamic-columns">
 {%- for page in site.entries %}
+    {% if page.url contains "/windows/" %}
     <li><a href="{{ page.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias}}</code>){% endif%}</li>
+    {% endif %}
 {%- endfor %}
 </ul>
 
 <h3>Linux</h3>
-Coming soon.
+<ul class="dynamic-columns">
+{%- for page in site.entries %}
+    {% if page.url contains "/linux/" %}
+    <li><a href="{{ page.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias}}</code>){% endif%}</li>
+    {% endif %}
+{%- endfor %}
+</ul>
 
 <h3>MacOS</h3>
 Coming soon.

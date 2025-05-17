@@ -5,8 +5,8 @@ class CharacterInsertion extends Modifier {
     private CharacterInsertRange: Char[];
     private Offset: number;
 
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string, Characters: string, Offset: number) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, Characters: string, Offset: number) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
 
         // Parse character ranges
         if (Characters == null || Characters.length == 0)

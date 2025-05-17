@@ -435,10 +435,13 @@ code,
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 }
 
+.context-menu>*{
+    padding: 2px 10px;
+}
+
 .context-menu>li {
     cursor: pointer;
     list-style-type: none;
-    padding: 2px 10px;
 }
 
 .context-menu>li:hover {
@@ -793,4 +796,8 @@ img.pct80-width {
     display: block;
     margin: auto;
     width: 80%;
+}
+
+#output-command .hidden, #output-command>.hidden+.space {
+    display: none;
 }

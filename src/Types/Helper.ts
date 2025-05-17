@@ -1,7 +1,8 @@
 
 function SetPosition(Parent: HTMLElement, ContextMenu: HTMLElement): void {
     var box = Parent.getBoundingClientRect()
-    ContextMenu.style.top = (box.height / 2) + "px";
+    ContextMenu.style.top = `${Math.round(box.top - Parent.parentElement.getBoundingClientRect().top) + (box.height/2)}px`;
+    ContextMenu.style.left = `${Math.round(box.left - Parent.parentElement.getBoundingClientRect().left)}px`
 }
 
 function ShowContextMenu(Element: HTMLElement, ClickElement: HTMLElement) {

@@ -31,16 +31,18 @@ abstract class Modifier {
     protected InputCommandTokens: Token[] = [];
     protected IncludedTypes: string[] = [];
     protected Probability: number;
+    protected Arguments: Argument[];
 
     public static SeparationChar: Char = ' ' as String as Char;
     public static QuoteChars: Char[] = ['"' as String as Char, "'" as String as Char];
     public static ValueChars: Char[] = ['=' as String as Char, ':' as String as Char];
     public static CommonOptionChars: Char[] = ['/' as String as Char, '-' as String as Char];
 
-    constructor(InputCommand: Token[], IncludedTypes: string[], Probability: string) {
+    constructor(InputCommand: Token[], IncludedTypes: string[], Arguments: Argument[], Probability: string) {
         // Parse inputs
         this.InputCommandTokens = InputCommand
         this.IncludedTypes.push(...IncludedTypes);
+        this.Arguments = Arguments;
         this.Probability = Modifier.ParseProbability(Probability);
     }
 
@@ -57,7 +59,22 @@ abstract class Modifier {
         return [...Array(length)].reduce(a => a + p[~~(Math.random() * p.length)], '');
     }
 
-    public static CommandTokenise(InputCommand: string, FormatPicker: HTMLMenuElement): Token[] {
+    protected static Shuffle<T>(array: Array<T>, offset:number = 0) {
+        for (let i = array.length - 1; i > offset; i--) {
+            const j = offset + Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    protected static GetArgDetails(Arguments: Argument[], TokenContent: Char[]) : (Argument | null){
+        let result = Arguments.filter(x => x.Arguments?.some(y => y === TokenContent.join("")))
+        if(result && result.length > 0){
+            return result[0];
+        }
+        return null;
+    }
+
+    public static CommandTokenise(InputCommand: string, Arguments: Argument[], FormatPicker: HTMLMenuElement): Token[] {
         if (InputCommand == null) return null;
         var InQuote: Char | null = null;
         var InOptionChar: boolean | null = null;
@@ -73,10 +90,11 @@ abstract class Modifier {
                 if (Char != this.SeparationChar)
                     TokenContent.push(Char);
 
-                if (Token.length > 0)
-                    Tokens.push(new Token(TokenContent));
+                if (Token.length > 0 && TokenContent.length > 0)
+                    Tokens.push(new Token(TokenContent, Modifier.GetArgDetails(Arguments, TokenContent)?.ValueCount > 0));
                 TokenContent = [] as Char[];
                 InOptionChar = false;
+
             } else {
                 if (InQuote != null && Char.toString() == InQuote?.toString())
                     InQuote = null;
@@ -84,11 +102,27 @@ abstract class Modifier {
                     InQuote = Char;
 
                 TokenContent.push(Char);
+
+                // Check for known argument match
+                let a = Modifier.GetArgDetails(Arguments, TokenContent)
+                if (TokenContent.length == 2 && a !== null) {
+                    // Create existing find as new token
+                    let t = new Token(TokenContent, a.ValueCount > 0);
+                    Tokens.push(t);
+                    TokenContent = [] as Char[];
+                    InOptionChar = false;
+
+                    // If we are NOT expecting a value and the next character is not a separation char, it will be another command
+                    if (a.ValueCount == 0 && ((i+1) < InputCommand.length && InputCommand[i + 1] != this.SeparationChar))
+                        TokenContent.push(Tokens[Tokens.length - 1].GetContent()[0])
+
+                }
             }
+
             SeenValueChar = SeenValueChar || this.ValueChars.some(x => x == Char)
         }
-        if (Token?.length > 0)
-            Tokens.push(new Token(TokenContent));
+        if (Token?.length > 0 && TokenContent.length > 0)
+            Tokens.push(new Token(TokenContent, Modifier.GetArgDetails(Arguments, TokenContent)?.ValueCount > 0));
 
         // Find matching template, if available
         Tokens[0].SetType("command");
@@ -99,7 +133,7 @@ abstract class Modifier {
                 logUserError("unexpected-program", `Are you sure you pasted a valid <code>${expectedProgram}</code> command? To obfuscate the command-line arguments of other executables, click <a href="/">here</a>.`)
             }
         }
-        //if (FormatPicker && FormatPicker.children[1].dataset['active'] != 'true')
+
         if (FormatPicker != null) {
             let i = 0;
             let found = false;
@@ -117,11 +151,11 @@ abstract class Modifier {
                     logUserError("pattern-cmd", '<code>cmd.exe</code> requires special obfuscation - please check out the <a href="https://github.com/danielbohannon/Invoke-DOSfuscation" target="_blank">Invoke-Dosfuscation project</a> for this! Below are the results for obfuscating the \'inner\' command.');
                     if (Tokens[commandIndex + 1].GetContent()[0] == '"') { // Argument is quoted
                         let command = Tokens[commandIndex + 1].GetStringContent()
-                        return Modifier.CommandTokenise(command.slice(1, command.length - 1), FormatPicker)
+                        return Modifier.CommandTokenise(command.slice(1, command.length - 1), Arguments, FormatPicker)
                     }
                     else // Argument is unquoted
                     {
-                        return Modifier.CommandTokenise(Tokens.slice(commandIndex + 1).map(y => y.GetStringContent()).join(this.SeparationChar as string), FormatPicker)
+                        return Modifier.CommandTokenise(Tokens.slice(commandIndex + 1).map(y => y.GetStringContent()).join(this.SeparationChar as string), Arguments, FormatPicker)
                     }
                 } else {
                     logUserError("pattern-cmd-2", '<code>cmd.exe</code> requires special obfuscation - please checkout the <a href="https://github.com/danielbohannon/Invoke-DOSfuscation" target="_blank">Invoke-Dosfuscation project</a> for this!');
@@ -157,21 +191,21 @@ abstract class Modifier {
             let _TokenText = TokenText.replace(/(['"])(.*?)\1/g, '$2') //Remove any surrounding quotes
             // If previous token ends with a ValueChar, assume this token denotes a 'value' type;
             // or, if no option char present, designate it as 'value', unless overwritten further down
-            if (this.ValueChars.some(y => Tokens[i].GetContent().reverse()[0] == y) || !Modifier.CommonOptionChars.some(x => _TokenText.startsWith(x as string))){
+            if (this.ValueChars.some(y => Tokens[i].GetContent().reverse()[0] == y) || !Modifier.CommonOptionChars.some(x => _TokenText.startsWith(x as string))) {
                 x.SetType('value');
 
                 // Special case: WMIC
-                if(Tokens[0].GetStringContent().match(/wmic(\.exe)?/i)
-                    && !Tokens.slice(1, 2+i).some(x => x.GetType() == 'disabled')
-                && !(Tokens[i].GetType() == 'argument' && Modifier.ValueChars.some(x => Tokens[i].GetContent().reverse()[0] == x))
-            ){
-                console.log(Tokens[i]);
+                if (Tokens[0].GetStringContent().match(/wmic(\.exe)?/i)
+                    && !Tokens.slice(1, 2 + i).some(x => x.GetType() == 'disabled')
+                    && !(Tokens[i].GetType() == 'argument' && Modifier.ValueChars.some(x => Tokens[i].GetContent().reverse()[0] == x))
+                ) {
                     x.SetType('disabled');
                 }
 
             }
 
             if (_TokenText.match(/^(?:\\\\[^\\]+|[a-zA-Z]:|\.[\\/])((?:\\[^\\]+)+\\)?([^<>:]*)$/) || _TokenText.match(/^[^<>:]+\.[a-zA-Z0-9]{2,4}$/)) x.SetType('path'); // Windows file path format
+            if (_TokenText == '-') x.SetType('path') // stdin
             if (_TokenText.match(/^(HKLM|HKCC|HKCR|HKCU|HKU|HKEY_(LOCAL_MACHINE|CURRENT_CONFIG|CLASSES_ROOT|CURRENT_USER|USERS))\\?/i)) x.SetType('disabled'); // Windows Registry
 
 

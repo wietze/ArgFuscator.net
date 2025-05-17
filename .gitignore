@@ -2,6 +2,7 @@
 *.js.map
 !gui/assets/js/*.js
 gui/assets/js/main.*
+gui/src
 
 node_modules/*
 gui/assets/models/*
@@ -14,3 +15,7 @@ _entries/
 .jekyll-metadata
 Gemfile
 Gemfile.lock
+
+# Python
+.venv/
+__pycache__/

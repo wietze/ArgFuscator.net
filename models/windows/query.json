@@ -1,1 +1,9 @@
-{"command": [{"command": "query"}, {"value": "process"}, {"argument": "/id:"}, {"value": "1"}, {"path": "lsass.exe"}, {"argument": "/server:"}, {"value": "localhost"}], "modifiers": {"OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["/", "-"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.1",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command": [{"command": "query"}, {"value": "process"}, {"argument": "/id:"}, {"value": "1"}, {"path": "lsass.exe"}, {"argument": "/server:"}, {"value": "localhost"}], "modifiers": {"OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["/", "-"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}}}}
+    ]
+}

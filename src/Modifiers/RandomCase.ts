@@ -1,7 +1,7 @@
 @Modifier.Register("RaNdOmCaSe", "Flip UPPERCASE characters to their lowercase equivalent, and vice versa.", ['command', 'argument', 'value', 'path'])
 class RandomCase extends Modifier {
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
     }
 
     GenerateOutput(): void {

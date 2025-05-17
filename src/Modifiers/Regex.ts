@@ -5,8 +5,8 @@
 class Regex extends Modifier {
     private readonly RegexMatch: RegExp;
     private readonly RegexReplace: string;
-    constructor(InputCommand: Token[], ApplyTo: string[], Probability: string, RegexMatch: string, RegexReplace: string, CaseSensitive: boolean) {
-        super(InputCommand, ApplyTo, Probability);
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, RegexMatch: string, RegexReplace: string, CaseSensitive: boolean) {
+        super(InputCommand, ApplyTo, Arguments, Probability);
         if (!RegexMatch)
             throw Error("No regex string provided")
 

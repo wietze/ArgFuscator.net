@@ -1,12 +1,26 @@
 var LastTokenised: Token[] = []
+var Arguments: Argument[] = []
 var LastIgnoredTokens: [number, number][] = [];
 var OutputTokenHTML: HTMLElement;
 var ConfigTokenHTML: HTMLElement;
-var LoadedConfigModifiers: Map<string, object> = new Map();
+var LoadedConfigModifiers: Map<string, FileFormat> = new Map();
 
 interface FileFormat {
+    profiles: Array<Profile>
+    alias: string
+}
+
+interface Profile {
+    parameters: ProfileParameters
+    operatingSystem: string
+    operatingSystemVersion: string
+    executableVersion: string
+}
+
+interface ProfileParameters {
     command: Array<[string, string]>;
     modifiers: object;
+    arguments: Array<any>;
 }
 
 function GetInputCommand(): string | null {
@@ -21,7 +35,7 @@ function UpdateTokens(): void {
     removeUserErrors();
     ConfigTokenHTML = document.querySelector("div#tokens");
     OutputTokenHTML = document.querySelector('div#output-command');
-    LastTokenised = Modifier.CommandTokenise(GetInputCommand(), document.getElementById("menu-templates") as HTMLMenuElement);
+    LastTokenised = Modifier.CommandTokenise(GetInputCommand(), Arguments, document.getElementById("menu-templates") as HTMLMenuElement);
 
     if (document.getElementById("feeling-lucky"))
         document.getElementById("feeling-lucky").style.display = LastTokenised?.length > 0 ? 'none' : 'block';
@@ -40,6 +54,7 @@ function UpdateUITokens(Tokenised: Token[]): void {
         var OutputTokenElement = document.createElement('span');
         var ConfigTokenElement = document.createElement('div');
         let SpaceElement = document.createElement('span');
+        SpaceElement.className = "space"
         SpaceElement.innerHTML = "&nbsp;";
 
         ConfigTokenElement.classList.add("token");
@@ -74,7 +89,7 @@ function ApplyObfuscation(): void {
         let ClassInstance: Modifier = Object.create((window as any)[ClassName].prototype);
 
         let IncludedTypes = JSON.parse(document.getElementById(Element.id + "_arg0").dataset.included_types);
-        let ClassInstanceArguments: any[] = [LastTokenised, IncludedTypes];
+        let ClassInstanceArguments: any[] = [LastTokenised, IncludedTypes, Arguments];
 
         let SelectedOptionArguments = document.querySelectorAll("input[id^=\"" + Element.id + "_arg\"], textarea[id^=\"" + Element.id + "_arg\"]") as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
         SelectedOptionArguments.forEach(OptionElement => {
@@ -172,39 +187,173 @@ function addEnterListener(target: HTMLElement) {
     });
 }
 
+function SetProfile(profiles: Profile[], index: number) {
+    let profileItems = document.querySelectorAll<HTMLLinkElement>("menu#menu-profiles > li");
+    if (profileItems) {
+        // Reset all profile items
+        profileItems.forEach(profileItem => profileItem.ariaSelected = profileItem.dataset['active'] = 'false')
+        // Set the newly selected one as selected
+        profileItems[index].ariaSelected = 'true'
+        profileItems[index].dataset['active'] = 'true'
+        // Update label text
+        document.getElementById("profile-selected").innerText = profileItems[index].innerText
+    }
+    // Finally, apply template
+    ApplyTemplate({ profiles: profiles } as FileFormat, index, false);
+}
+
 function OnLoad() {
     window.removeEventListener("DOMContentLoaded", OnLoad, false);
     if (!document.querySelector("div#tokens")) return;
+
+
     UpdateTokens();
     GenerateObfuscationOptionsHTML();
-    document.getElementById("format-picker")?.addEventListener("change", FetchJsonFile);
-    document.getElementById("json-file")?.addEventListener("change", ReadJsonFile);
+
+    // Main box
     document.getElementById("input-command")?.addEventListener("keyup", debounce(UpdateTokens, 1000));
-    document.getElementById("input-command")?.addEventListener("paste", () => setTimeout(UpdateTokens, 0));
+    document.getElementById("input-command")?.addEventListener("paste", () => debounce(UpdateTokens, 0));
     document.getElementById("obfuscation-run")?.addEventListener("click", () => ApplyObfuscation());
     addEnterListener(document.getElementById("obfuscation-run"));
+
+    // Main box: feeling lucky
+    document.getElementById("feeling-lucky")?.addEventListener("click", _ => {
+        let templates = Array.from(document.getElementById('menu-templates').querySelectorAll<HTMLLIElement>("li[data-target]")).map(x => x.dataset?.target)
+        let template = templates[Math.floor(Math.random() * templates.length)]
+        FetchJsonFileContents(template).then(data => ApplyTemplate({ profiles: data.profiles } as FileFormat, 0, true))
+            .then(_ => document.getElementById("feeling-lucky").style.display = 'none')
+    });
+
+    // Options dropdown
+    document.querySelectorAll<HTMLFieldSetElement>("fieldset.collapsible").forEach((x) => {
+        let legend = x.querySelector("legend");
+        let span = document.createElement("span");
+        let content = x.children[1] as HTMLElement;
+        span.innerText = content.classList.contains("collapsed") ? "▶" : "▼";
+        legend.prepend(span);
+        legend.addEventListener("click", () => {
+            if (content.classList.contains("collapsed"))
+                content.classList.remove("collapsed");
+            else
+                content.classList.add("collapsed");
+
+            span.innerText = content.classList.contains("collapsed") ? "▶" : "▼";
+        });
+    })
+
+    document.querySelectorAll<HTMLAnchorElement>("a.button-toggle").forEach(function (x) {
+        let target = document.getElementById(x.dataset.target);
+        x.addEventListener("click", _ => {
+            if (target.classList.contains("collapsed")) {
+                target.classList.remove("collapsed");
+                x.innerHTML = x.innerHTML.replace('Show', 'Hide');
+            } else {
+                target.classList.add("collapsed");
+                x.innerHTML = x.innerHTML.replace('Hide', 'Show');
+            }
+        });
+    });
+
+    // Options: Buttons
+    let ButtonTemplate = document.getElementById("button-template");
+    ButtonTemplate?.addEventListener("click", _ => ShowContextMenu(document.getElementById('menu-templates'), document.getElementById('button-template')))
+    ButtonTemplate?.addEventListener('keyup', (e: KeyboardEvent) => {
+        if (e.key >= 'a' && e.key <= 'z') {
+            let finds = [...Array.from(document.getElementById('menu-templates')?.querySelectorAll('li'))].filter(i => i.innerText.toLowerCase().startsWith(e.key))[0]
+            if (finds !== undefined)
+                finds.scrollIntoView()
+        }
+    })
+    addEnterListener(ButtonTemplate);
+
+    let ButtonProfile = document.getElementById("button-profile");
+    ButtonProfile.addEventListener("click", _ => ShowContextMenu(document.getElementById('menu-profiles'), document.getElementById('button-profile')))
+    addEnterListener(ButtonProfile);
+
     document.getElementById("download-config")?.addEventListener("click", GenerateConfigJsonFile);
     addEnterListener(document.getElementById("download-config"));
     document.getElementById("reset-form")?.addEventListener("click", ResetForm);
     addEnterListener(document.getElementById("reset-form"));
 
-    document.getElementById("feeling-lucky")?.addEventListener("click", (x) => {
-        let jsons = Array.from(document.getElementById('menu-templates').querySelectorAll<HTMLLIElement>("li[data-target]")).map(x => x.dataset?.target);
-        let json = jsons[Math.floor(Math.random() * jsons.length)];
-        fetch(json, { headers: { "Content-Type": "application/json; charset=utf-8" } })
-            .then(res => res.text())
-            .then(response => {
-                ApplyTemplate(JSON.parse(response as string), true);
-                document.getElementById("feeling-lucky").style.display = 'none';
-            })
-            .catch(err => {
-                throw err;
-            });
+    // Options: Template Selector
+    document.getElementById("json-file")?.addEventListener("change", ReadUploadedJsonFile);
+    document.querySelector(`#menu-templates>li[data-function="upload"]`)?.addEventListener("click", _ => { console.log("yay"); document.getElementById("json-file").click() });
+    document.querySelectorAll("#menu-templates>li")?.forEach((clickedContextMenuItem: HTMLLIElement) => {
+        clickedContextMenuItem.addEventListener("click", _ => {
+            let currentlySelectedContextMenuItem = document.querySelector<HTMLLIElement>("#menu-templates>li[data-active='true']");
+
+            Promise.all([FetchJsonFileContents(currentlySelectedContextMenuItem?.dataset.target), FetchJsonFileContents(clickedContextMenuItem?.dataset.target)])
+                .then(([oldDefaultModifiers, newModifiers]) => {
+                    if (CheckChanged(clickedContextMenuItem, newModifiers?.profiles[0].parameters.modifiers, oldDefaultModifiers?.profiles[0].parameters.modifiers)) {
+                        clickedContextMenuItem.parentNode.childNodes.forEach((x: HTMLElement) => { x.ariaSelected = 'false'; if (x.dataset) x.dataset['active'] = "" });
+
+                        if (!clickedContextMenuItem.dataset['function']) {
+                            clickedContextMenuItem.dataset['active'] = 'true';
+                            clickedContextMenuItem.ariaSelected = 'true';
+                            document.getElementById("template-selected").innerText = clickedContextMenuItem.innerText;
+
+                            // Populate profile selector menu
+                            let ContextMenuItemClickHandler = (i: number) => { if (i < newModifiers.profiles.length) { SetProfile(newModifiers.profiles, i); document.dispatchEvent(new MouseEvent("mousedown", { clientX: 1, clientY: 1, bubbles: true })) } }
+
+                            UpdateContextMenu((newModifiers?.profiles.map((profile: Profile) => `${profile.executableVersion} tested on ${profile.operatingSystem} ${profile.operatingSystemVersion}`)).concat(...["Add a new profile..."]), "profiles", ContextMenuItemClickHandler)
+
+                            // By default, select and apply the first profile
+                            SetProfile(newModifiers.profiles, 0)
+                        } else {
+                            document.getElementById("template-selected").innerText = "(none)";
+                            document.getElementById("profile-selected").innerText = "(none)";
+                            UpdateContextMenu([], "profiles", null)
+                        }
+
+                        document.dispatchEvent(new MouseEvent("mousedown", { clientX: 1, clientY: 1, bubbles: true }));
+                    }
+                })
+        });
     });
 
+    // Options: Modifier Boxes
+    document.querySelectorAll<HTMLInputElement>(".option-target").forEach((ContextMenuButton: HTMLDivElement) => {
+        // Create new Context Menu
+        let ContextMenu = document.getElementsByClassName("context-menu")[0].cloneNode(true) as HTMLMenuElement;
+        ContextMenu.removeChild(ContextMenu.children[0]);
+        ContextMenuButton.parentNode.insertBefore(ContextMenu, ContextMenuButton.nextSibling);
+
+        Array.from(ContextMenu.children).forEach((ContextMenuItem: HTMLElement) => {
+            ContextMenuItem.addEventListener("click", e => {
+                ContextMenuItem.dataset.active = (ContextMenuItem.dataset.active == "true" ? "" : "true");
+                let IncludedTypes = JSON.parse(ContextMenuButton.dataset.included_types) as string[];
+                if (ContextMenuItem.dataset.active == "true")
+                    IncludedTypes.push(ContextMenuItem.dataset.type);
+                else
+                    IncludedTypes = IncludedTypes.filter(item => item !== ContextMenuItem.dataset.type);
+                ContextMenuButton.dataset.included_types = JSON.stringify(IncludedTypes);
+                ContextMenuButton.innerText = UpdateExcludeText(ContextMenuButton, ContextMenu);
+            })
+        });
+        ContextMenuButton.innerText = UpdateExcludeText(ContextMenuButton, ContextMenu);
+        ContextMenuButton.addEventListener("click", _ => ShowContextMenu(ContextMenu, ContextMenuButton))
+    });
+    document.querySelectorAll<HTMLInputElement>("input[id^=\"option-\"]").forEach(p => {
+        p.addEventListener("change", _ => {
+            if (p.parentElement) {
+                var suboptions = p.parentElement.querySelector<HTMLDivElement>("div.suboptions")
+                if (!p.checked) {
+                    p.parentElement.classList.remove('selected');
+                    if (suboptions) suboptions.style.display = "none";
+                } else {
+                    p.parentElement.classList.add('selected')
+                    if (suboptions) suboptions.style.display = "flex";
+                }
+            }
+        }); p.dispatchEvent(new Event("change"))
+    });
+    slist(document.getElementById("options-panel-options"));
+
+
+    // Entry pages
     if (document.getElementById("input-command").dataset.target !== undefined) {
-        FetchJsonFileContents(document.getElementById("input-command").dataset.target, null).then(newModifiers => {
-            ApplyTemplate({ modifiers: newModifiers } as FileFormat, false);
+        FetchJsonFileContents(document.getElementById("input-command").dataset.target).then(newModifiers => {
+            ApplyTemplate({ profiles: newModifiers.profiles } as FileFormat, 0, false);
             document.querySelectorAll<HTMLSpanElement>("code[data-process]").forEach(x => {
                 // Create modifier
                 const ID = document.querySelector(`input[data-function="${x.dataset.process}"]`).id;
@@ -244,106 +393,6 @@ function OnLoad() {
             });
         });
     }
-
-    document.getElementById("button-template")?.addEventListener("click", _ => ShowContextMenu(document.getElementById('menu-templates'), document.getElementById('button-template')))
-    addEnterListener(document.getElementById("button-template"));
-    document.getElementById("button-template")?.addEventListener('keyup', (e: KeyboardEvent) => {
-        if (e.key >= 'a' && e.key <= 'z') {
-            let finds = [...Array.from(document.getElementById('menu-templates')?.querySelectorAll('li'))].filter(i => i.innerText.toLowerCase().startsWith(e.key))[0]
-            if (finds !== undefined)
-                finds.scrollIntoView()
-        }
-    });;
-
-    document.getElementById('menu-templates')?.childNodes.forEach((ContextMenuItem: HTMLLIElement) => {
-        ContextMenuItem.addEventListener("click", e => {
-            let currentSelected = document.querySelector<HTMLLIElement>("#menu-templates>li[data-active='true']");
-            FetchJsonFile2(currentSelected).then(oldDefaultModifiers =>
-                FetchJsonFile2(ContextMenuItem).then(newModifiers => {
-                    if (CheckChanged(ContextMenuItem, newModifiers, oldDefaultModifiers)) {
-                        ContextMenuItem.parentNode.childNodes.forEach((x: HTMLElement) => { x.ariaSelected = 'false'; if (x.dataset) x.dataset['active'] = "" });
-
-                        if (!ContextMenuItem.dataset['function']) {
-                            ApplyTemplate({ modifiers: newModifiers } as FileFormat, false);
-                            ContextMenuItem.dataset['active'] = 'true';
-                            ContextMenuItem.ariaSelected = 'true';
-
-                            document.getElementById("template-selected").innerText = ContextMenuItem.innerText;
-                        } else
-                            document.getElementById("template-selected").innerText = "(none)";
-
-                        document.dispatchEvent(new MouseEvent("mousedown", { clientX: 1, clientY: 1, bubbles: true }));
-                    }
-                })
-            );
-        });
-    });
-
-    document.querySelectorAll<HTMLFieldSetElement>("fieldset.collapsible").forEach((x) => {
-        let legend = x.querySelector("legend");
-        let span = document.createElement("span");
-        let content = x.children[1] as HTMLElement;
-        span.innerText = content.classList.contains("collapsed") ? "▶" : "▼";
-        legend.prepend(span);
-        legend.addEventListener("click", () => {
-            if (content.classList.contains("collapsed"))
-                content.classList.remove("collapsed");
-            else
-                content.classList.add("collapsed");
-
-            span.innerText = content.classList.contains("collapsed") ? "▶" : "▼";
-        });
-
-    })
-    document.querySelectorAll<HTMLAnchorElement>(".button-toggle").forEach(function (x) {
-        let target = document.getElementById(x.dataset.target);
-        x.addEventListener("click", _ => {
-            if (target.classList.contains("collapsed")) {
-                target.classList.remove("collapsed");
-                x.innerHTML = x.innerHTML.replace('Show', 'Hide');
-            } else {
-                target.classList.add("collapsed");
-                x.innerHTML = x.innerHTML.replace('Hide', 'Show');
-            }
-        });
-    });
-    document.querySelectorAll<HTMLInputElement>(".option-target").forEach((ContextMenuButton: HTMLDivElement) => {
-        // Create new Context Menu
-        let ContextMenu = document.getElementsByClassName("context-menu")[0].cloneNode(true) as HTMLMenuElement;
-        ContextMenu.removeChild(ContextMenu.children[0]);
-        ContextMenuButton.parentNode.insertBefore(ContextMenu, ContextMenuButton.nextSibling);
-
-        Array.from(ContextMenu.children).forEach((ContextMenuItem: HTMLElement) => {
-            ContextMenuItem.addEventListener("click", e => {
-                ContextMenuItem.dataset.active = (ContextMenuItem.dataset.active == "true" ? "" : "true");
-                let IncludedTypes = JSON.parse(ContextMenuButton.dataset.included_types) as string[];
-                if (ContextMenuItem.dataset.active == "true")
-                    IncludedTypes.push(ContextMenuItem.dataset.type);
-                else
-                    IncludedTypes = IncludedTypes.filter(item => item !== ContextMenuItem.dataset.type);
-                ContextMenuButton.dataset.included_types = JSON.stringify(IncludedTypes);
-                ContextMenuButton.innerText = UpdateExcludeText(ContextMenuButton, ContextMenu);
-            })
-        });
-        ContextMenuButton.innerText = UpdateExcludeText(ContextMenuButton, ContextMenu);
-        ContextMenuButton.addEventListener("click", _ => ShowContextMenu(ContextMenu, ContextMenuButton))
-    });
-
-    document.querySelectorAll<HTMLInputElement>("input[id^=\"option-\"]").forEach(p => {
-        p.addEventListener("change", _ => {
-            if (p.parentElement) {
-                var suboptions = p.parentElement.querySelector<HTMLDivElement>("div.suboptions")
-                if (!p.checked) {
-                    p.parentElement.classList.remove('selected');
-                    if (suboptions) suboptions.style.display = "none";
-                } else {
-                    p.parentElement.classList.add('selected')
-                    if (suboptions) suboptions.style.display = "flex";
-                }
-            }
-        }); p.dispatchEvent(new Event("change"))
-    });
-    slist(document.getElementById("options-panel-options"));
 };
 
 
@@ -458,4 +507,22 @@ function logUserError(id: string, message: string, error: boolean = false) {
 function removeUserErrors(): void {
     if (document.getElementById("error-messages"))
         document.getElementById("error-messages").innerHTML = "";
+}
+
+function UpdateContextMenu(Options: string[], Name: string, ClickHandler: (index: number) => any = null): void {
+    let menu: HTMLMenuElement = document.querySelector(`menu#menu-${Name}`)
+
+    // Remove old entries
+    menu.querySelectorAll("*").forEach(x => x.remove())
+
+    // Add new ones
+    Options.forEach((option, index) => {
+        let li = document.createElement("li");
+        //li.role = "option";
+        li.id = `${Name}_${option.toLowerCase()}`
+        li.innerText = option;
+        if (ClickHandler != null)
+            li.addEventListener("click", (ev: MouseEvent) => { ClickHandler(index) })
+        menu.appendChild(li)
+    })
 }

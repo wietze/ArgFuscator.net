@@ -1,1 +1,9 @@
-{"command":[{"command":"regedit"},{"argument":"/e"},{"path":"c:\\windows\\temp\\output.reg"},{"disabled":"HKEY_CURRENT_USER\\Environment"}],"modifiers":{"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"}, "CharacterInsertion":{"AppliesTo":["argument"],"Probability":"0.5","Characters":["b","f","g","h","i","j","k","m","n","o","p","q","s","t","u","v","w","x","y","z"],"Offset":"1"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["/","-"]},"QuoteInsertion":{"AppliesTo":["argument","url","value"],"Probability":"0.5"}}}
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.4830",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"regedit"},{"argument":"/e"},{"path":"c:\\windows\\temp\\output.reg"},{"disabled":"HKEY_CURRENT_USER\\Environment"}],"modifiers":{"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"}, "CharacterInsertion":{"AppliesTo":["argument"],"Probability":"0.5","Characters":["b","f","g","h","i","j","k","m","n","o","p","q","s","t","u","v","w","x","y","z"],"Offset":"1"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["/","-"]},"QuoteInsertion":{"AppliesTo":["argument","url","value"],"Probability":"0.5"}}}}
+    ]
+}
