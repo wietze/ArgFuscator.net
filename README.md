@@ -32,7 +32,26 @@ Finally, the models were tested against the created implementation in order to v
 
 ## Local development
 
-To run ArgFuscator yourself, follow the following steps:
+### Option 1: Docker (Recommended)
+
+The easiest way to run ArgFuscator is using Docker:
+
+```bash
+# Using docker-compose
+docker-compose up --build
+
+# Or using Docker directly
+docker build -t argfuscator .
+docker run -p 4000:4000 argfuscator
+```
+
+Access ArgFuscator at `http://localhost:4000`
+
+For detailed Docker setup including TrueNAS Scale deployment, see [DOCKER.md](DOCKER.md).
+
+### Option 2: Manual Setup
+
+To run ArgFuscator yourself manually, follow these steps:
 
 0. Prerequirements:
     1. Clone this repository;
