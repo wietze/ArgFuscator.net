@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  argfuscator:
+    image: argfuscator:latest
+    container_name: argfuscator
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - TZ=UTC
+    networks:
+      - argfuscator_network
+
+networks:
+  argfuscator_network:
+    driver: bridge
