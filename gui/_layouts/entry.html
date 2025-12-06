@@ -1,6 +1,8 @@
 ---
 layout: general
 description: See all supported executables on __SITE__.
+redirect_from:
+ - /entries/windows/:program.html
 ---
 {% capture program %}{%include name page=page%}{% endcapture -%}
 <h1>{{ program }}</h1>
@@ -23,7 +25,7 @@ It was found that <code>{{ program }}</code> command lines can be obfuscated wit
 <section>
     <h2>Obfuscate <code>{{ program }}</code> commands</h2>
 
-    <menu class="context-menu">
+    <menu class="context-menu ctx">
         <li data-type="disabled">Ignore</li>
         <li data-type="command">Program Name</li>
         <li data-type="argument">Regular Argument</li>
@@ -33,7 +35,7 @@ It was found that <code>{{ program }}</code> command lines can be obfuscated wit
     </menu>
     <div>
         <div class="tools">
-            <textarea id="input-command" data-target="{{ page.url|replace:'entries/','assets/models/'|replace:'.html', '.json'|relative_url }}" data-program="{{ program }}" placeholder="Paste a valid {{ program }} command here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+            <textarea id="input-command" data-target="{{ page.url|replace:'executables/','assets/models/'|replace:'.html', '.json'|relative_url }}" data-program="{{ program }}" placeholder="Paste a valid {{ program }} command here…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
             <div class="command-bar">
                 <div id="tokens"></div>
                 <div><a class="button button-primary button-toggle" data-target="obfuscation-options"><strong>Show options</strong></a> <a class="button button-inverted" id="obfuscation-run"><strong>Apply obfuscation</strong></a></div>
@@ -55,10 +57,22 @@ It was found that <code>{{ program }}</code> command lines can be obfuscated wit
                     <div class="picker">
                         <div class="button-selection">
                             <a class="button" id="button-profile" aria-haspopup="listbox" aria-expanded="false" role="combobox" tabindex="3" aria-controls="menu-profiles"><strong>Selected profile</strong>: <span id="profile-selected">(none)</span></a>
+                            <a class="button button-toggle" data-target="options-accepted-arguments" id="accepted-arguments" data-visit-click="Argument-Edit" tabindex="4"><strong>Show accepted arguments</strong></a>
                             <a class="button" id="download-config" download="config-export.json" data-visit-click="JSON-Download-entry"><strong>Download config</strong></a>
                             <a class="button" id="reset-form"><strong>Reset</strong></a>
                         </div>
                     </div>
+                </div>
+                <div id="options-accepted-arguments" class="collapsed">
+                    <textarea id="accepted-arguments-list" placeholder="Optionally, you can define all accepted arguments (as well as their expected value count) here.
+
+Format:
+argument[,argument,...] value-count
+
+e.g.
+--help 0
+--output,-o 1
+--verbose,-v 0"></textarea>
                 </div>
                 <div id="options-panel-options"></div>
             </div>

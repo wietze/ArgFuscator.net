@@ -7,13 +7,19 @@ header: |
                             <div class="command-bar">
                                 <div id="feeling-lucky"><a>Click here to try a random command</a></div>
                                 <div id="tokens"></div>
-                                <a class="button button-primary" id="obfuscation-run" tabindex="1"><strong>Apply obfuscation</strong></a>
+                                <div class="controls">
+                                    <a class="button button-primary collapsed" id="button-profile" aria-haspopup="listbox" aria-expanded="false" role="combobox" tabindex="3" aria-controls="menu-profiles"><strong><span id="profiles-available">0</span> profiles available ⚠️</strong></a>
+                                            <menu class="context-menu" id="menu-profiles" aria-labelledby="button-template" tabindex="-1" role="listbox"></menu>
+
+                                    <a class="button button-primary" id="obfuscation-run" tabindex="1"><strong>Apply obfuscation</strong></a>
+                                </div>
                             </div>
                             <div id="error-messages"></div>
+                            <span id="profile-selected"></span>
                         </div>
 ---
 
-        <menu class="context-menu">
+        <menu class="context-menu ctx">
             <li role="option" data-type="disabled">Ignore</li>
             <li role="option" data-type="command">Program Name</li>
             <li role="option" data-type="argument">Regular Argument</li>
@@ -38,25 +44,35 @@ header: |
                             {% assign operating_systems = "windows,linux,mac" | split: ',' %}
                             {% for os in operating_systems %}
                             <strong>{{os | capitalize}}</strong>
-                                {% for entry in site.entries -%}
-                                    {%- if entry.url contains os %}
-                            <li role="option" id="format_{{ entry.url | replace:'/entries/', '' |replace:'/','_' | replace:'.html','' }}" data-target="{{ entry.url|replace:'entries/','assets/models/'|replace:'.html', '.json'|relative_url }}"{% if entry.alias %} data-alias="{{ entry.alias }}"{%endif%}>{{ entry.slug }}{% if entry.url contains '/windows' %}.exe{% endif %}</li>
+                                {% for entry in site.executables -%}
+                                {% assign profile = entry.profiles | where: "platform",os %}
+                                    {%- if profile.size > 0 %}
+                            <li role="option" id="format_{{ entry.url | replace:'/executables/', '' |replace:'/','_' | replace:'.html','' }}" data-target="{{ entry.url|replace:'executables/','assets/models/'|replace:'.html', '.json'|relative_url }}"{% if entry.alias %} data-alias="{{ entry.alias }}"{%endif%}>{{ entry.slug }}{% if os == 'windows' %}.exe{% endif %}</li>
                                     {%- endif -%}
                                 {%- endfor %}
                             {%- endfor %}
                         </menu>
 
-                        <menu class="context-menu" id="menu-profiles" aria-labelledby="button-template" tabindex="-1" role="listbox">
-                        </menu>
-
                         <label for="json-file"><input type="file" id="json-file" accept=".json" /></label>
                         <div class="button-selection">
                             <a class="button" id="button-template" aria-haspopup="listbox" aria-expanded="false" role="combobox" tabindex="2" aria-controls="menu-templates"><strong>Selected template</strong>: <span id="template-selected">(none)</span></a>
-                            <a class="button" id="button-profile" aria-haspopup="listbox" aria-expanded="false" role="combobox" tabindex="3" aria-controls="menu-profiles"><strong>Selected profile</strong>: <span id="profile-selected">(none)</span></a>
-                            <a class="button" id="download-config" download="config-export.json" data-visit-click="JSON-Download" tabindex="4"><strong>Download config</strong></a>
-                            <a class="button" id="reset-form" tabindex="5"><strong>Reset</strong></a>
+                            <a class="button button-toggle" data-target="options-accepted-arguments" id="accepted-arguments" data-visit-click="Argument-Edit" tabindex="4"><strong>Show accepted arguments</strong></a>
+                            <div class="fill"></div>
+                            <a class="button" id="download-config" download="config-export.json" data-visit-click="JSON-Download" tabindex="5"><strong>Download config</strong></a>
+                            <a class="button" id="reset-form" tabindex="6"><strong>Reset</strong></a>
                         </div>
                     </div>
+                </div>
+                <div id="options-accepted-arguments" class="collapsed">
+                    <textarea id="accepted-arguments-list" placeholder="Optionally, you can define all accepted arguments (as well as their expected value count) here.
+
+Format:
+argument[,argument,...] value-count
+
+e.g.
+--help 0
+--output,-o 1
+--verbose,-v 0"></textarea>
                 </div>
                 <div id="options-panel-options"></div>
             </div>

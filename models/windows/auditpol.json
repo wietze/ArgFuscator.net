@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "10.0.22621.1",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command": [{"command": "auditpol"}, {"argument": "/backup"}, {"argument": "/file:"}, {"path": "c:\\windows\\temp\\file.csv"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}}}}
-    ]
-}

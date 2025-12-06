@@ -2,14 +2,15 @@ title: ArgFuscator
 repo: wietze/ArgFuscator.net
 baseurl: ''
 collections:
-  entries:
+  executables:
     output: true
 defaults:
   -
     values:
       layout: "entry"
+      # permalink: "executables/:slug.html"
     scope:
-      path: "_entries/*"
+      path: "_executables/*"
 
 mapping:
   Sed:
@@ -26,7 +27,7 @@ mapping:
     description: It is possible to add double quotes (in multiples of two) to some of the command-line options. This may obfuscate keywords used on the command line.
   Shorthands:
     name: Shorthands
-    description: It is possible to shorten or otherwise abbreviate certain command-line options.
+    description: It is possible to shorten or otherwise abbreviate certaian command-line options.
   FilePathTransformer:
     name: File Path Transformations
     description: When file paths are supplied to the executable, it is possible to apply transformations to the file path that may obscure the real path.
@@ -36,3 +37,5 @@ mapping:
   RandomCase:
     name: RaNdOmCaSe
     description: Part of the command line is case insensitive, meaning it is possible to use upper- and lowercase characters interchangably. This may frustrate case-sensitive detections.
+plugins:
+  - jekyll-redirect-from

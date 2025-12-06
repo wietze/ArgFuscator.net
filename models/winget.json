@@ -1,0 +1,10 @@
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "1.10.390",
+      "platform": "windows",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"winget"},{"value":"hash"},{"argument":"-f"},{"path":"c:\\windows\\temp\\file.ext"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["path","url","argument","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","path","url","value"],"Probability":"0.5"}}}}
+    ]
+}

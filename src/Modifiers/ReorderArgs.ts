@@ -1,19 +1,22 @@
 @Modifier.AddArgument("CombineShortForm", "checkbox", "Combine flag options", "")
 @Modifier.AddArgument("RandomiseOrder", "checkbox", "Randomise order of flags", "")
 @Modifier.AddArgument("SwapLongShortForm", "checkbox", "Swap long-form arguments for short-form equivalents and vice versa", "")
+@Modifier.AddArgument("InsertRedundantShortforms", "checkbox", "Insert additional options that are not expected to affect the command's outcome.", "")
 @Modifier.Register("Reorder Arguments", "Change the order and/or form of certain short- and long-form arguments.", ['argument'])
 class ReorderArgs extends Modifier {
     private CombineShortForm: boolean;
     private SwapLongShortForm: boolean;
     private RandomiseOrder: boolean;
+    private InsertRedundantShortforms: boolean;
 
-    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, CombineShortForm: boolean, RandomiseOrder: boolean, SwapLongShortForm: boolean) {
+    constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, CombineShortForm: boolean, RandomiseOrder: boolean, SwapLongShortForm: boolean, InsertRedundantShortforms: boolean) {
         super(InputCommand, ApplyTo, Arguments, Probability)
         this.CombineShortForm = CombineShortForm
         this.SwapLongShortForm = SwapLongShortForm
         this.RandomiseOrder = RandomiseOrder
+        this.InsertRedundantShortforms = InsertRedundantShortforms
 
-        if(Arguments?.length == 0)
+        if (Arguments?.length == 0)
             logUserError("arguments-error", `Cannot apply Reorder Arguments modifier: no known command-line arguments specified.`, true);
     }
 
@@ -44,6 +47,7 @@ class ReorderArgs extends Modifier {
             })
         }
 
+        let redundants = this.Arguments?.filter(y => y.Redundant === true && y.ValueCount == 0).map(y => y.Arguments).flat().filter(y => y[0] == '-' && y.length == 2).map(y => y[1])
         if (this.CombineShortForm) {
             this.InputCommandTokens.forEach((Token, index) => {
                 // Check if this is one of the mergeable tokens, and with probability merge it
@@ -55,6 +59,13 @@ class ReorderArgs extends Modifier {
                     let newContent = Token.GetContent()
                     candidates.forEach(x => {
                         newContent.push(...x.GetContent().slice(1))
+                        for(var i=0; true; i++){
+                            if (this.InsertRedundantShortforms && Modifier.CoinFlip(This.Probability * (0.9**i)))
+                                newContent.push(Modifier.ChooseRandom(redundants))
+                            else
+                                break
+                        }
+
                         x.SetContent([]) // Ensures token is 'removed'
                     })
 
@@ -73,7 +84,6 @@ class ReorderArgs extends Modifier {
                     Token.SetContent(newContent)
                 }
             })
-
 
             // Second pass: merge left-over short-form arguments that have a value
             this.InputCommandTokens.forEach((Token, index) => {

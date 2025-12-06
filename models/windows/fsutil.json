@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "10.0.22621.3958",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command": [{"command": "fsutil"}, {"value": "file"}, {"value": "createNew"}, {"path": "c:\\windows\\temp\\fsutil.txt"}, {"value": "1234"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["path", "command", "value"]}}}}
-    ]
-}

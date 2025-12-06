@@ -1,0 +1,10 @@
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "7.8.22621.1",
+      "platform": "windows",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"bitsadmin"},{"argument":"/addfile"},{"value":"downloadjob"},{"url":"https://www.example.org/file.ext"},{"path":"c:\\windows\\temp\\output.ext"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path","value"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["url","argument","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["argument","path","command"],"Probability":"0.5"},"UrlTransformer":{"AppliesTo":["url"],"Probability":"0.5","LeaveOutProtocol":false,"LeaveOutDoubleSlashes":true,"SubstituteSlashes":false,"IpToHex":false,"PathTraversal":false}}}}
+    ]
+}

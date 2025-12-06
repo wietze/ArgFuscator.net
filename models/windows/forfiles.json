@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "10.0.22621.1",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command":[{"command":"FORFILES"},{"argument":"/p"},{"path":"c:\\windows\\system32"},{"argument":"/S"},{"argument":"/M"},{"path":"notepad.exe"},{"argument":"/C"},{"value":"\"calc.exe\""}],"modifiers":{"RandomCase":{"AppliesTo":["argument", "path", "command"],"Probability":"0.5"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":false},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["/","-"]},"QuoteInsertion":{"AppliesTo":["path","url","argument","value"],"Probability":"0.5"}}}}
-    ]
-}

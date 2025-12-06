@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "3.7.7.0",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command":[{"command":"tar.exe"},{"argument":"-cf"},{"path":"output.ext"},{"path":"c:\\windows\\temp\\file.ext"}],"modifiers":{"CharacterInsertion":{"AppliesTo":["argument"],"Probability":"0.5","Characters":[":"],"Offset":0},"Regex":{"AppliesTo":["argument"],"Probability":"0.5","RegexMatch":":+$","RegexReplace":" ","CaseSensitive":false},"Sed":{"AppliesTo":["argument"],"Probability":"0.5","SedStatements":"s/t/\u0163|\u0165|\u0167|\u01ab|\u03c4|\uff54/\ns/c/\u0107|\u0109|\u010b|\u010d|\uff43/\ns/u/\u0169|\u016b|\u016d|\u016f|\u0171|\u0173|\u01b0|\u01d4|\u01d6|\u01d8|\u01da|\u01dc|\uff55/\ns/r/\uff52|\u0159|\u0157|\u0155/\ns/f/\uff46|\u03c6/\ns/l/\u013a|\u013c|\u013e|\u0142|\u019a|\u2113|\uff4c/\ns/L/\u0139|\u013b|\u013d|\u0141|\u2112|\uff2c/\ns/:/\uff1a/"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":false,"SubstituteSlashes":true,"ExtraSlashes":false},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","\u2010","\u2012","\u2015","\u2212","\uff0d"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"}}}}
-    ]
-}

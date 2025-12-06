@@ -5,20 +5,26 @@ var OutputTokenHTML: HTMLElement;
 var ConfigTokenHTML: HTMLElement;
 var LoadedConfigModifiers: Map<string, FileFormat> = new Map();
 
-interface FileFormat {
+class FileFormat {
     profiles: Array<Profile>
-    alias: string
+    alias?: string
+    versions: Versions
 }
 
-interface Profile {
+class Versions {
+    argfuscator: string
+    format: string
+}
+
+class Profile {
     parameters: ProfileParameters
     operatingSystem: string
     operatingSystemVersion: string
     executableVersion: string
 }
 
-interface ProfileParameters {
-    command: Array<[string, string]>;
+class ProfileParameters {
+    command: object[];
     modifiers: object;
     arguments: Array<any>;
 }
@@ -31,14 +37,17 @@ function GetInputCommand(): string | null {
     return InputCommand;
 }
 
-function UpdateTokens(): void {
+function UpdateTokens(Interactive: boolean = false): void {
     removeUserErrors();
     ConfigTokenHTML = document.querySelector("div#tokens");
     OutputTokenHTML = document.querySelector('div#output-command');
-    LastTokenised = Modifier.CommandTokenise(GetInputCommand(), Arguments, document.getElementById("menu-templates") as HTMLMenuElement);
+    LastTokenised = Modifier.CommandTokenise(GetInputCommand(), Arguments, Interactive ? null : (document.getElementById("menu-templates") as HTMLMenuElement));
 
     if (document.getElementById("feeling-lucky"))
         document.getElementById("feeling-lucky").style.display = LastTokenised?.length > 0 ? 'none' : 'block';
+
+    if (document.getElementById("profile-selected"))
+        document.getElementById("profile-selected").style.display = (LastTokenised?.length || 0) <= 0 ? 'none' : 'block';
 
     UpdateUITokens(LastTokenised);
 }
@@ -177,6 +186,7 @@ function ResetForm() {
     document.querySelectorAll<HTMLInputElement>('input[type=checkbox]').forEach(x => { x.checked = x.defaultChecked; x.dispatchEvent(new Event("change")) });
     document.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(x => { x.value = x.defaultValue; x.dispatchEvent(new Event("keyup")) });
     document.getElementById("menu-templates")?.children[0].dispatchEvent(new Event("click"));
+    document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value = ""
 }
 
 function addEnterListener(target: HTMLElement) {
@@ -187,7 +197,7 @@ function addEnterListener(target: HTMLElement) {
     });
 }
 
-function SetProfile(profiles: Profile[], index: number) {
+function SetProfile(profiles: Profile[], index: number, Interactive: boolean) {
     let profileItems = document.querySelectorAll<HTMLLinkElement>("menu#menu-profiles > li");
     if (profileItems) {
         // Reset all profile items
@@ -195,11 +205,9 @@ function SetProfile(profiles: Profile[], index: number) {
         // Set the newly selected one as selected
         profileItems[index].ariaSelected = 'true'
         profileItems[index].dataset['active'] = 'true'
-        // Update label text
-        document.getElementById("profile-selected").innerText = profileItems[index].innerText
     }
     // Finally, apply template
-    ApplyTemplate({ profiles: profiles } as FileFormat, index, false);
+    ApplyTemplate({ versions: { format: "2.0" }, profiles: profiles } as FileFormat, index, Interactive);
 }
 
 function OnLoad() {
@@ -211,8 +219,8 @@ function OnLoad() {
     GenerateObfuscationOptionsHTML();
 
     // Main box
-    document.getElementById("input-command")?.addEventListener("keyup", debounce(UpdateTokens, 1000));
-    document.getElementById("input-command")?.addEventListener("paste", () => debounce(UpdateTokens, 0));
+    document.getElementById("input-command")?.addEventListener("keyup", debounce(() => UpdateTokens(), 1000));
+    document.getElementById("input-command")?.addEventListener("paste", () => debounce(() => UpdateTokens(), 0));
     document.getElementById("obfuscation-run")?.addEventListener("click", () => ApplyObfuscation());
     addEnterListener(document.getElementById("obfuscation-run"));
 
@@ -220,8 +228,7 @@ function OnLoad() {
     document.getElementById("feeling-lucky")?.addEventListener("click", _ => {
         let templates = Array.from(document.getElementById('menu-templates').querySelectorAll<HTMLLIElement>("li[data-target]")).map(x => x.dataset?.target)
         let template = templates[Math.floor(Math.random() * templates.length)]
-        FetchJsonFileContents(template).then(data => ApplyTemplate({ profiles: data.profiles } as FileFormat, 0, true))
-            .then(_ => document.getElementById("feeling-lucky").style.display = 'none')
+        FetchJsonFileContents(template).then(data => ApplyTemplate({ versions: { format: "2.0" }, profiles: data.profiles } as FileFormat, 0, true)).then(_ => document.getElementById("feeling-lucky").style.display = 'none')
     });
 
     // Options dropdown
@@ -277,14 +284,13 @@ function OnLoad() {
 
     // Options: Template Selector
     document.getElementById("json-file")?.addEventListener("change", ReadUploadedJsonFile);
-    document.querySelector(`#menu-templates>li[data-function="upload"]`)?.addEventListener("click", _ => { console.log("yay"); document.getElementById("json-file").click() });
+    document.querySelector(`#menu-templates>li[data-function="upload"]`)?.addEventListener("click", _ => { document.getElementById("json-file").click() });
     document.querySelectorAll("#menu-templates>li")?.forEach((clickedContextMenuItem: HTMLLIElement) => {
-        clickedContextMenuItem.addEventListener("click", _ => {
+        clickedContextMenuItem.addEventListener("click", x => {
             let currentlySelectedContextMenuItem = document.querySelector<HTMLLIElement>("#menu-templates>li[data-active='true']");
-
             Promise.all([FetchJsonFileContents(currentlySelectedContextMenuItem?.dataset.target), FetchJsonFileContents(clickedContextMenuItem?.dataset.target)])
                 .then(([oldDefaultModifiers, newModifiers]) => {
-                    if (CheckChanged(clickedContextMenuItem, newModifiers?.profiles[0].parameters.modifiers, oldDefaultModifiers?.profiles[0].parameters.modifiers)) {
+                    if (CheckChanged(clickedContextMenuItem, newModifiers?.profiles[0].parameters.modifiers, oldDefaultModifiers?.profiles.map(x => x.parameters.modifiers))) {
                         clickedContextMenuItem.parentNode.childNodes.forEach((x: HTMLElement) => { x.ariaSelected = 'false'; if (x.dataset) x.dataset['active'] = "" });
 
                         if (!clickedContextMenuItem.dataset['function']) {
@@ -293,15 +299,31 @@ function OnLoad() {
                             document.getElementById("template-selected").innerText = clickedContextMenuItem.innerText;
 
                             // Populate profile selector menu
-                            let ContextMenuItemClickHandler = (i: number) => { if (i < newModifiers.profiles.length) { SetProfile(newModifiers.profiles, i); document.dispatchEvent(new MouseEvent("mousedown", { clientX: 1, clientY: 1, bubbles: true })) } }
+                            let ContextMenuItemClickHandler = (i: number) => {
+                                if (i < newModifiers.profiles.length) {
+                                    SetProfile(newModifiers.profiles, i, false);
+                                    // document.dispatchEvent(new MouseEvent("mousedown", { clientX: 1, clientY: 1, bubbles: true }))
+                                }
+                            }
 
-                            UpdateContextMenu((newModifiers?.profiles.map((profile: Profile) => `${profile.executableVersion} tested on ${profile.operatingSystem} ${profile.operatingSystemVersion}`)).concat(...["Add a new profile..."]), "profiles", ContextMenuItemClickHandler)
+                            UpdateContextMenu((newModifiers?.profiles.map(p => `${p.parameters.command.filter((x): x is { command: string } => typeof x === "object" && x !== null && "command" in x)[0].command} ${p.executableVersion} tested on ${p.operatingSystem} ${p.operatingSystemVersion}`)).concat("Add a new profile..."), "profiles", ContextMenuItemClickHandler);
+
+                            document.getElementById("profiles-available").innerText = (newModifiers?.profiles.length || 0).toString();
+                            const profileCount = newModifiers?.profiles.length || 0;
+                            document.getElementById("profiles-available").innerText = profileCount.toString()
+                            if (profileCount <= 1) {
+                                document.getElementById("button-profile").classList.add('collapsed')
+                            } else {
+                                document.getElementById("button-profile").classList.remove('collapsed')
+                            }
 
                             // By default, select and apply the first profile
-                            SetProfile(newModifiers.profiles, 0)
+                            SetProfile(newModifiers.profiles, 0, false)
                         } else {
                             document.getElementById("template-selected").innerText = "(none)";
-                            document.getElementById("profile-selected").innerText = "(none)";
+                            document.getElementById("profile-selected").innerText = "";
+                            document.getElementById("profiles-available").innerText = "0";
+                            document.getElementById("button-profile").classList.add('collapsed')
                             UpdateContextMenu([], "profiles", null)
                         }
 
@@ -314,8 +336,8 @@ function OnLoad() {
     // Options: Modifier Boxes
     document.querySelectorAll<HTMLInputElement>(".option-target").forEach((ContextMenuButton: HTMLDivElement) => {
         // Create new Context Menu
-        let ContextMenu = document.getElementsByClassName("context-menu")[0].cloneNode(true) as HTMLMenuElement;
-        ContextMenu.removeChild(ContextMenu.children[0]);
+        let ContextMenu = document.getElementsByClassName("ctx")[0].cloneNode(true) as HTMLMenuElement;
+        if (ContextMenu.children.length > 0) ContextMenu.removeChild(ContextMenu.children[0]);
         ContextMenuButton.parentNode.insertBefore(ContextMenu, ContextMenuButton.nextSibling);
 
         Array.from(ContextMenu.children).forEach((ContextMenuItem: HTMLElement) => {
@@ -353,7 +375,7 @@ function OnLoad() {
     // Entry pages
     if (document.getElementById("input-command").dataset.target !== undefined) {
         FetchJsonFileContents(document.getElementById("input-command").dataset.target).then(newModifiers => {
-            ApplyTemplate({ profiles: newModifiers.profiles } as FileFormat, 0, false);
+            ApplyTemplate({ versions: { format: "2.0" }, profiles: newModifiers.profiles } as FileFormat, 0, false);
             document.querySelectorAll<HTMLSpanElement>("code[data-process]").forEach(x => {
                 // Create modifier
                 const ID = document.querySelector(`input[data-function="${x.dataset.process}"]`).id;

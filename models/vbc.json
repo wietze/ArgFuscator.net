@@ -1,0 +1,10 @@
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "14.8.9256",
+      "platform": "windows",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"c:\\windows\\Microsoft.NET\\Framework64\\v4.0.30319\\vbc.exe"},{"argument":"/target:"},{"value":"exe"},{"argument":"/out:"},{"path":"c:\\windows\\temp\\file.exe"},{"argument":"/optimize+"},{"argument":"/nologo"}, {"path":"c:\\windows\\temp\\file.vbs"}],"modifiers":{"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"}, "FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["path","url","value"],"Probability":"0.5"}}}}
+    ]
+}

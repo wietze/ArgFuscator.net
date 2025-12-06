@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "7.2.22621.1",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters":{"command":[{"command":"cmstp"},{"argument":"/s"},{"path":"c:\\windows\\temp\\file.inf"}],"modifiers":{"RandomCase":{"AppliesTo":["argument", "path"],"Probability":"0.5"},"Sed":{"AppliesTo":["argument","value"],"Probability":"0.5","SedStatements":"s/s/ˢ/i"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true}}}}
-    ]
-}

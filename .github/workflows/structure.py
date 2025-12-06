@@ -64,6 +64,7 @@ class ArgFuscatorOptions(Base):
 class Argument(Base):
     Arguments: list[str]
     ValueCount: pydantic.NonNegativeInt
+    Redundant: bool | None
 
 # Modifiers
 

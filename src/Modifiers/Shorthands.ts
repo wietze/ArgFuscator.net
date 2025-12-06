@@ -1,4 +1,3 @@
-//@Modifier.AddArgument("ShorthandCommands", "textarea", "Commands that can be shortened", "Enter ALL commands that can be shortened here (comma separated).\ne.g. enter 'test' if 'tes', 'te', 't' are also accepted.\nShould there be commands that start with the same letters, this will be taken into account when generating alternatives.")
 @Modifier.AddArgument("CaseSensitive", "checkbox", "Case sensitive", "")
 @Modifier.Register("Shorthands", "Allow certain commands to be shortened.", ['argument'])
 class Shorthands extends Modifier {
@@ -13,6 +12,12 @@ class Shorthands extends Modifier {
 
         if (!CaseSensitive)
             result = result.toLocaleLowerCase();
+
+        // Extract suffix, if present
+        let suffix = Modifier.ValueChars.includes(result.charAt(result.length - 1)) ? result.charAt(result.length - 1) : "";
+        if(suffix != ""){
+            result = result.substring(0, result.length-1)
+        }
 
         return result
     }
@@ -66,9 +71,18 @@ class Shorthands extends Modifier {
         this.InputCommandTokens.forEach(Token => {
             if (This.IncludedTypes.includes(Token.GetType()) && Modifier.CoinFlip(This.Probability)) {
                 let token = Shorthands.NormaliseArgument(Token.GetStringContent(), This.CaseSensitive)
+
                 if (This.Substitutions.has(token)) {
-                    let original_token = Shorthands.NormaliseArgument(Token.GetStringContent(), This.CaseSensitive, false);
-                    Token.SetContent(original_token.replace(token, Modifier.ChooseRandom(This.Substitutions.get(token))).split(""));
+                    let tok = Token.GetStringContent()
+                    // Extract suffix, if present
+                    let suffix = Modifier.ValueChars.includes(tok.charAt(tok.length - 1)) ? tok.charAt(tok.length - 1) : "";
+                    if(suffix != ""){
+                        tok = tok.substring(0, tok.length-1)
+                    }
+
+                    let original_token = Shorthands.NormaliseArgument(tok, This.CaseSensitive, false);
+
+                    Token.SetContent(original_token.replace(token, Modifier.ChooseRandom(This.Substitutions.get(token))+ suffix).split("") );
                 }
             }
         });

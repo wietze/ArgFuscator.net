@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "10.0.22621.4830",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command":[{"command":"robocopy"},{"path":"c:\\windows\\temp\\test1"},{"path":"c:\\windows\\temp\\test2"},{"argument":"/copy:"},{"value":"DATS"},{"argument":"/s"},{"argument":"/ndl"},{"argument":"/v"},{"argument":"/quit"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"},"Sed":{"AppliesTo":["argument","value"],"Probability":"0.5","SedStatements":"s/a/\u1d43/i\ns/b/\u1d47/i\ns/c/\u1d9c/i\ns/d/\u1d48/i\ns/e/\u1d49/i\ns/f/\u1da0/i\ns/g/\u1d4d/i\ns/h/\u02b0/i\ns/j/\u02b2/i\ns/k/\u1d4f/i\ns/l/\u02e1/i\ns/m/\u1d50/i\ns/o/\u1d52/i\ns/p/\u1d56/i\ns/r/\u02b3/i\ns/s/\u02e2/i\ns/t/\u1d57/i\ns/u/\u1d58/i\ns/v/\u1d5b/i\ns/w/\u02b7/i\ns/x/\u02e3/i\ns/y/\u02b8/i\ns/z/\u1dbb/i"}}}}
-    ]
-}

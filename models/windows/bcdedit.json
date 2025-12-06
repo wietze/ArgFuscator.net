@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "10.0.22621.4455",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command": [{"command": "bcdedit"}, {"argument": "/export"}, {"path": "\"c:\\windows\\temp\\output.csv\""}], "modifiers": {"OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "command", "path"]}, "UrlTransformer": {"Probability": "0.5", "LeaveOutProtocol": false, "LeaveOutDoubleSlashes": false, "SubstituteSlashes": false, "IpToHex": true, "PathTraversal": true, "AppliesTo": ["url"]}, "FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "argument", "value"]}}}}
-    ]
-}

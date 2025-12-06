@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "4.8.9032.0",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command": [{"command": "\"C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\MSBuild.exe\""}, {"path": "C:\\windows\\temp\\test.csproj"}, {"argument": "/v:"}, {"value": "q"}, {"argument": "/nologo"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["/", "-"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}, "UrlTransformer": {"Probability": "0.5", "LeaveOutProtocol": false, "LeaveOutDoubleSlashes": false, "SubstituteSlashes": false, "IpToHex": false, "PathTraversal": false, "AppliesTo": ["url"]}}}}
-    ]
-}

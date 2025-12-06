@@ -1,0 +1,10 @@
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.3085",
+      "platform": "windows",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command":[{"command":"wevtutil"},{"value":"enum-logs"},{"argument":"/unicode:"},{"value":"true"}],"modifiers":{"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["path","url"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","path","url","value","argument"],"Probability":"0.5"}}}}
+    ]
+}

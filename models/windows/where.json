@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "10.0.22621.1",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command":[{"command":"where"},{"argument":"/R"},{"path":"C:\\windows\\temp"},{"path":"file.ext"}],"modifiers":{"RandomCase":{"AppliesTo":["command","argument","path","value"],"Probability":"0.5"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"}}}}
-    ]
-}

@@ -1,0 +1,10 @@
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "10.0.22621.1",
+      "platform": "windows",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command": [{"command": "driverquery"}, {"argument": "/s"}, {"url": "127.0.0.1"}, {"argument": "/s\"i\""}, {"argument": "/fo"}, {"value": "C\"sV\""}], "modifiers": {"OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["path", "command", "value", "url", "argument"]}}}}
+    ]
+}

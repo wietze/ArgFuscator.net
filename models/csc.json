@@ -1,0 +1,10 @@
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "4.8.9232.0",
+      "platform": "windows",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters":{"command":[{"command":"csc.exe"},{"argument":"-out:"},{"path":"output.dll"},{"argument":"-target:"},{"value":"library"},{"path":"file.cs"}, {"argument":"-nologo"}],"modifiers":{"Sed":{"AppliesTo":["argument"],"Probability":"0.5","SedStatements":"s/target/t/i\ns/debug/d/i\ns/reference/r/i\ns/link/l/i\ns/resource/res/i\ns/linkresource/linkres/i\ns/warn/w/i\ns/optimize/o/i\ns/define/d/i\ns/main/m/i"},"FilePathTransformer":{"AppliesTo":["path","value"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["/","-"]},"RandomCase":{"AppliesTo":["argument","command","path"],"Probability":"0.5"}}}}
+    ]
+}

@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "4.8.9032.0",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command":[{"command":"C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\aspnet_compiler"},{"argument":"-nologo"},{"argument":"-v"},{"path":"\"C:\\Windows\\temp\""}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["path","url","argument","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","path","url","value","argument"],"Probability":"0.5"},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["-","/"]}}}}
-    ]
-}

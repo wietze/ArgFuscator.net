@@ -1,0 +1,10 @@
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "5.0.22621.3880",
+      "platform": "windows",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command": [{"command": "msiexec.exe"}, {"argument": "/package"}, {"url": "https://example.org/installer.msi"}, {"value": "VARIABLE="}, {"value": "value"}, {"argument": "/log"}, {"path": "output.txt"}], "modifiers": {"Sed":{"AppliesTo":["argument"],"Probability":"0.3","SedStatements":"s/\\/i/\\/package/i\ns/\\/package/\\/i/i\ns/\\/uninstall/\\/x/i\ns/\\/x/\\/uninstall/i\ns/\\/l*/\\/log/i\ns/a/\u1d43/i\ns/b/\u1d47/i\ns/c/\u1d9c/i\ns/d/\u1d48/i\ns/e/\u1d49/i\ns/f/\u1da0/i\ns/g/\u1d4d/i\ns/h/\u02b0/i\ns/j/\u02b2/i\ns/k/\u1d4f/i\ns/m/\u1d50/i\ns/n/\u207f/i\ns/o/\u1d52/i\ns/p/\u1d56/i\ns/r/\u02b3/i\ns/s/\u02e2/i\ns/t/\u1d57/i\ns/u/\u1d58/i\ns/w/\u02b7/i\ns/x/\u02e3/i\ns/y/\u02b8/i\ns/z/\u1dbb/i\ns/\\/log/\\/l*/i"},"Regex":{"AppliesTo":["path","url","value"],"Probability":"0.5","RegexMatch":".msi(\")?$","RegexReplace":"$1","CaseSensitive":false},"RandomCase":{"AppliesTo":["argument","command","path"],"Probability":"0.5"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":false,"SubstituteSlashes":true,"ExtraSlashes":true},"OptionCharSubstitution":{"AppliesTo":["argument"],"Probability":"0.5","OutputOptionChars":["/","-"]},"UrlTransformer":{"AppliesTo":["url"],"Probability":"0.5","LeaveOutProtocol":false,"LeaveOutDoubleSlashes":false,"SubstituteSlashes":true,"IpToHex":false,"PathTraversal":true}}}}
+    ]
+}

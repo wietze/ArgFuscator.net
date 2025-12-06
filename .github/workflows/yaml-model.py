@@ -6,7 +6,7 @@ import sys
 import pydantic
 import structure
 
-for file in sorted(glob.glob('models/**/*')):
+for file in sorted(glob.glob('models/**')):
     try:
         file_path = file.rstrip(os.sep).split(os.sep)
 

@@ -1,0 +1,30 @@
+---
+layout: general
+title: Entries
+---
+<h2>All supported entries ({{ site.executables | size }})</h2>
+
+For a comparison of the obfuscation capabilities per executable, see <a href="{{ '/executables/comparison.html' | relative_url }}">comparisons</a>.
+
+<h3>Windows</h3>
+<ul class="dynamic-columns">
+{%- for page in site.executables %}
+  {% assign profile = page.profiles | where: "platform","windows" %}
+  {% if profile.size > 0 %}
+    <li><a href="{{ page.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}.exe</a>{% if page.alias %} (and <code>{{page.alias}}.exe</code>){% endif%}</li>
+    {% endif %}
+{%- endfor %}
+</ul>
+
+<h3>Linux</h3>
+<ul class="dynamic-columns">
+{%- for page in site.executables %}
+  {% assign profile = page.profiles | where: "platform","linux" %}
+  {% if profile.size > 0 %}
+    <li><a href="{{ page.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias}}</code>){% endif%}</li>
+    {% endif %}
+{%- endfor %}
+</ul>
+
+<h3>MacOS</h3>
+Coming soon.

@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "10.0.22621.2506",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command":[{"command":"at"},{"value":"12:"},{"value":"34"},{"argument":"/interactive"},{"path":"\"calc.exe\""}],"modifiers":{"Shorthands":{"AppliesTo":["argument"],"Probability":"0.5","CaseSensitive":false},"QuoteInsertion":{"AppliesTo":["argument","path","url","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","argument","value","path"],"Probability":"0.5"}}, "arguments":[{"Arguments":["/delete"],"ValueCount":0},{"Arguments":["/yes"],"ValueCount":0},{"Arguments":["/interactive"],"ValueCount":0},{"Arguments":["/next:"],"ValueCount":0},{"Arguments":["/every:"],"ValueCount":0}]}}
-    ]
-}

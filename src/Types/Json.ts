@@ -14,15 +14,15 @@ function ObjectEquals(object_a: object, object_b: object): boolean {
     }); //order does not matter
 }
 
-function CheckChanged(targetElem: HTMLLIElement, newModifiers: object, oldDefaultModifiers: object): boolean {
+function CheckChanged(targetElem: HTMLLIElement, newModifiers: object, oldDefaultModifiers: object[]): boolean {
     const warningText = "You made changes to the default obfuscation options, but the new command you entered has different obfuscation settings.\nAre you sure you want to lose the changes you made?\n\nPress OK to discard your changes and apply the new configuration, or click Cancel to keep your configuration.";
 
     // User clicks a button that is different to the selected template
-    if (targetElem.innerText != document.getElementById('template-selected').innerText) {
+    if (targetElem.innerText.replace(".exe", "") != document.getElementById('template-selected').innerText.replace(".exe", "")) {
         let currentConfig = GetJsonContents(); // Get JSON object of current config
         if (Object.keys(currentConfig).length === 0 // Current config is blank; no need to ask
             || ObjectEquals(newModifiers, currentConfig) // Current config equals the target config, no need to ask
-            || ObjectEquals(oldDefaultModifiers, currentConfig) // current config equals the original config, no need to ask
+            || oldDefaultModifiers?.some(oldDefaultModifier => ObjectEquals(oldDefaultModifier, currentConfig)) // current config equals the original config, no need to ask
         ) { // If any of these are true:
             return true; // proceed without asking
         } else { // If not, we should check with the user
@@ -33,22 +33,9 @@ function CheckChanged(targetElem: HTMLLIElement, newModifiers: object, oldDefaul
     }
 }
 
-// async function FetchJsonFile(elem: HTMLLIElement): Promise<FileFormat | null> {
-//     if (elem == null || elem.dataset['function'] == 'none')
-//         return new Promise(function (resolve) { resolve(null); });
-//     if (LoadedConfigModifiers.has(elem.dataset.target))
-//         return new Promise(function (resolve) { resolve(LoadedConfigModifiers.get(elem.dataset.target)); });
-//     if (elem.dataset['function'] == 'upload') {
-//         document.getElementById("json-file").click()
-//         return new Promise(function (resolve) { resolve(null); });;
-//     } else {
-//         return await FetchJsonFileContents(elem.dataset.target);
-//     }
-// }
-
 async function FetchJsonFileContents(name: string): Promise<FileFormat> {
     // Nothing to fetch
-    if(name === undefined || name == null || !name) return new Promise(function (resolve) { resolve(null); })
+    if (name === undefined || name == null || !name) return new Promise(function (resolve) { resolve(null); })
 
     // Prefetched
     if (LoadedConfigModifiers.has(name))
@@ -81,7 +68,7 @@ function ReadUploadedJsonFile(this: HTMLInputElement): void {
         reader.readAsText(file, "UTF-8");
         reader.onload = function (evt) {
             ApplyTemplate(JSON.parse(evt.target.result as string), 0, true);
-            UpdateTokens();
+            UpdateTokens(true);
         }
         reader.onerror = function (evt) {
             document.getElementById("fileContents").innerHTML = "error reading file";
@@ -89,24 +76,34 @@ function ReadUploadedJsonFile(this: HTMLInputElement): void {
     }
 }
 
-function ApplyTemplate(InputFile: FileFormat, ProfileIndex: number, Interactive: Boolean) {
+function ApplyTemplate(InputFile: FileFormat | ProfileParameters, ProfileIndex: number, Interactive: boolean) {
     var CommandOutput: HTMLTextAreaElement = document.getElementById("input-command") as HTMLTextAreaElement;
     // Reset all currently enabled modifiers
     document.querySelectorAll<HTMLInputElement>("input[id^=\"option-\"]:checked").forEach(p => p.click());
 
+
     // Construct command
     let CurrentCommand = GetInputCommand()
 
-    let Input = InputFile.profiles[ProfileIndex].parameters;
+    let Input: ProfileParameters = null;
+    if ("versions" in InputFile){
+        let p = InputFile.profiles[ProfileIndex]
+        Input = p.parameters;
+        // Update label text
+        const selected_profile = `${p.parameters.command.filter((x): x is { command: string } => typeof x === "object" && x !== null && "command" in x)[0].command} ${p.executableVersion} tested on ${p.operatingSystem} ${p.operatingSystemVersion}`
+        document.getElementById("profile-selected").innerText = `Using profile for ${selected_profile}`
+    }
+    else
+        Input = InputFile
 
     // Set known arguments
-    Arguments = Input.arguments ? Input.arguments.map(x => new Argument(x["Arguments"], x["ValueCount"])) : [];
+    Arguments = Input.arguments ? Input.arguments.map(x => new Argument(x["Arguments"], x["ValueCount"], x["Redundant"])) : [];
 
     if (Object.keys(Input.modifiers).length == 0)
         logUserError("pattern-no-options", "Bummer! It looks like this executable does not have any known obfuscation options.", true)
 
     let NewCommand = null;
-    if (Input.command)
+    if (Interactive && Input.command)
         NewCommand = Input.command.map((Token, index) => {
             let prefix = "";
             if (index > 0) {
@@ -129,9 +126,8 @@ function ApplyTemplate(InputFile: FileFormat, ProfileIndex: number, Interactive:
             t.SetType(Type);
             LastTokenised.push(t);
         });
-
-        UpdateUITokens(LastTokenised);
     }
+    UpdateTokens(Interactive);
 
     // Set options
     document.querySelectorAll<HTMLInputElement>("input[id^=\"option-\"]:checked").forEach(x => x.click())
@@ -171,6 +167,9 @@ function ApplyTemplate(InputFile: FileFormat, ProfileIndex: number, Interactive:
             }
         });
     });
+
+    // If applicable, set arguments
+    document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value = Input.arguments ? Input.arguments.map(x => x.Arguments.join(",") + " " + x.ValueCount).join('\n') : ""
 }
 
 function GetJsonContents(): object {
@@ -210,6 +209,19 @@ function GenerateConfigJsonFile(this: HTMLAnchorElement) {
 
     let modifiers = GetJsonContents();
 
+    let arguments_: object[] = [];
+    const argumentsContent = document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value
+    if (argumentsContent) {
+        argumentsContent.split('\n').forEach((line, index) => {
+            const found = line.match(/^(\S+)\s+(\d+)$/)
+            if (found) {
+                arguments_.push({ "Arguments": found[1].split(','), "ValueCount": parseInt(found[2], 10) })
+            } else {
+                logUserError(`arguments-${index}`, `Accepted Arguments: could not parse line ${index + 1}, skipping`)
+            }
+        })
+    }
+
     if (Object.keys(modifiers).length == 0) {
         this.removeAttribute("href")
         alert("You haven't specified any output options, so there is nothing to download at this stage. Specify some obfuscation options first.");
@@ -217,8 +229,11 @@ function GenerateConfigJsonFile(this: HTMLAnchorElement) {
         this.download = ((LastTokenised && LastTokenised.length > 0) ? (LastTokenised[0].GetStringContent().split(/[\\\/]/).slice(-1)[0]) : "unspecified") + ".json";
 
         let output = new Map([["command", tokens], ["modifiers", modifiers]])
-        if (Arguments && Arguments.length > 0) { output.set("arguments", Arguments) }
+        if (arguments_ && arguments_.length > 0) { output.set("arguments", arguments_) }
 
-        this.href = 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(jsonEscapeNonAsci(JSON.stringify(Object.fromEntries(output.entries()))))));
+
+        const jsonOutput = { "versions": { "argfuscator": "2.0", "format": "2.0" }, "profiles": [{ "executableVersion": "x.y.z", "platform": "Windows", "operatingSystem": "Windows", "operatingSystemVersion": "11 (24H2)", "parameters": Object.fromEntries(output.entries()) }] }
+
+        this.href = 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(jsonEscapeNonAsci(JSON.stringify(jsonOutput)))));
     }
 }

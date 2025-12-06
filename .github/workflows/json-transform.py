@@ -6,8 +6,8 @@ import sys
 
 import yaml
 
-PATTERN_INPUT = 'gui/assets/models/**/*.json'
-PATTERN_OUTPUT = 'gui/_entries/*.md'
+PATTERN_INPUT = 'gui/assets/models/*.json'
+PATTERN_OUTPUT = 'gui/_executables/*.md'
 ENCODING = 'utf-8'
 
 # Create directories

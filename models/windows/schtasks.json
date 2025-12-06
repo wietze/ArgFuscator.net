@@ -1,9 +1,0 @@
-{
-    "versions": {"argfuscator": "2.0", "format": "2.0"},
-    "profiles":
-    [{"executableVersion": "10.0.22621.1",
-      "operatingSystem": "Windows",
-      "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command": [{"command": "schtasks"}, {"argument": "/query"}, {"argument": "/S"}, {"url": "127.0.0.1"}], "modifiers": {"UrlTransformer": {"Probability": "0.5", "LeaveOutProtocol": false, "LeaveOutDoubleSlashes": false, "SubstituteSlashes": false, "IpToHex": true, "PathTraversal": false, "AppliesTo": ["path", "command", "value", "url", "argument"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}, "OptionCharSubstitution": {"Probability": "1", "OutputOptionChars": ["-", "/"], "AppliesTo": ["url", "argument", "value"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}}
-    ]
-}

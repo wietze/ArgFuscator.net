@@ -1,0 +1,10 @@
+{
+    "versions": {"argfuscator": "2.0", "format": "2.0"},
+    "profiles":
+    [{"executableVersion": "11.0",
+      "platform": "windows",
+      "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (23H2)",
+      "parameters": {"command": [{"command": "procdump.exe"}, {"argument": "-ma"}, {"value": "4294967988"}, {"argument": "-o"}, {"path": ".\\out.dmp"}], "modifiers": {"Regex": {"Probability": "0.5", "RegexMatch": "^([0-9]+)$", "RegexReplace": "0$1", "CaseSensitive": false, "AppliesTo": ["path", "url", "argument", "value"]}, "FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}}}}
+    ]
+}
