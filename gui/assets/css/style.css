@@ -679,6 +679,10 @@ footer {
     gap: 5px;
     align-items: flex-start;
     justify-content: space-between;
+    position: relative;
+}
+.command-bar > div {
+    position: relative;
 }
 
 .command-bar>a {
@@ -822,4 +826,18 @@ img.pct80-width {
 #options-accepted-arguments textarea {
     flex: 1;
     height: 150px;
+}
+
+div.output-controls {
+    position: relative;
+}
+
+div.output-controls > .button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#profile-selected {
+    font-size: small;
 }

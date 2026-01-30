@@ -22,7 +22,6 @@ class DisabledType(enum.StrEnum):
 
 class Model(Base):
     versions: "Versions"
-    alias: str | None = pydantic.constr(min_length=1)
     profiles: list["Profile"] = pydantic.Field(..., min_length=1)
 
 
@@ -30,17 +29,23 @@ class Versions(Base):
     argfuscator: str = pydantic.Field(pattern=r'\d+\.\d+')
     format: Literal["2.0"]
 
+class Platform(enum.StrEnum):
+    WINDOWS = "windows"
+    LINUX = "linux"
+    MACOS = "mac"
 
 class Profile(Base):
     model_config = pydantic.ConfigDict(extra='forbid')
-    executableVersion: str
+    executableVersion: str | None
     operatingSystem: str
     operatingSystemVersion: str
+    platform: Platform
+    alias: list[str] | None = None
     parameters: "ArgFuscatorOptions"
 
 
 class ArgFuscatorOptions(Base):
-    command: list[dict[ArgumentType | DisabledType, str]] = pydantic.Field(..., min_length=2)
+    command: list[dict[ArgumentType | DisabledType, str]] = pydantic.Field(..., min_length=1)
     modifiers: dict[str, Any] = pydantic.Field(min_length=1)
     arguments: list["Argument"] | None = None
 
@@ -64,7 +69,7 @@ class ArgFuscatorOptions(Base):
 class Argument(Base):
     Arguments: list[str]
     ValueCount: pydantic.NonNegativeInt
-    Redundant: bool | None
+    Redundant: bool | None = None
 
 # Modifiers
 
@@ -86,6 +91,7 @@ class ReorderArgs(Modifier):
     CombineShortForm: bool
     RandomiseOrder: bool
     SwapLongShortForm: bool
+    InsertRedundantShortforms: bool
 
 
 class Shorthands(Modifier):
@@ -96,6 +102,7 @@ class FilePathTransformer(Modifier):
     PathTraversal: bool
     SubstituteSlashes: bool
     ExtraSlashes: bool
+    ValidFilePaths: bool | None = None
 
 
 class QuoteInsertion(Modifier):

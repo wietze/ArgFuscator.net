@@ -18,16 +18,16 @@ title: Comparison of entries
     </thead>
     <tbody>
         {%- assign arrs = "" %}
-{%- for page in site.executables %}
-    {% assign profile = page.profiles | where: "platform","windows" %}
-    {% if profile.size > 0 %}
-        {% capture name %}<td><a href="{{ page.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias}}</code>){% endif%}</td>{% endcapture %}
+{%- for entries in site.executables -%}
+    {%- assign page = entries.entries | first %}
+    {% if page.platform == 'windows' %}
+        {% capture name %}<td><a href="{{ entries.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias | first}}</code>){% endif%}</td>{% endcapture %}
 
         {%- capture output -%}
         {%- assign item_count = 0%}
         {%- for item in site.mapping -%}
             {%- assign x = item[0] -%}
-            {%- assign details = profile[0].parameters.modifiers[x] -%}
+            {%- assign details = page.parameters.modifiers[x] -%}
             <td>{%if details%}{% if x!= "Sed" or details.SedStatements contains "s/a/" or details.SedStatements contains "s/A/" or details.SedStatements contains "s/s/" %}✅{% assign item_count = item_count | plus: 1 %}{%endif%}{%endif-%}</td>
         {%- endfor -%}
         {%- endcapture -%}
@@ -65,16 +65,16 @@ title: Comparison of entries
     </thead>
     <tbody>
         {%- assign arrs = "" %}
-{%- for page in site.executables %}
-    {% assign profile = page.profiles | where: "platform","linux" %}
-    {% if profile.size > 0 %}
-        {% capture name %}<td><a href="{{ page.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias}}</code>){% endif%}</td>{% endcapture %}
+{%- for entries in site.executables -%}
+    {%- assign page = entries.entries | first %}
+    {% if page.platform == 'linux' %}
+        {% capture name %}<td><a href="{{ entries.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias| first}}</code>){% endif%}</td>{% endcapture %}
 
         {%- capture output -%}
         {%- assign item_count = 0%}
         {%- for item in site.mapping -%}
             {%- assign x = item[0] -%}
-            {%- assign details = profile[0].parameters.modifiers[x] -%}
+            {%- assign details = page.parameters.modifiers[x] -%}
             <td>{%if details%}{% if x!= "Sed" or details.SedStatements contains "s/a/" or details.SedStatements contains "s/A/" or details.SedStatements contains "s/s/" %}✅{% assign item_count = item_count | plus: 1 %}{%endif%}{%endif-%}</td>
         {%- endfor -%}
         {%- endcapture -%}
@@ -98,5 +98,49 @@ title: Comparison of entries
 </table>
 </div>
 
-<h3>MacOS</h3>
-Coming soon.
+<h3>macOS</h3>
+<div class="comparison-container">
+<table class="comparison">
+    <thead>
+        <tr>
+            <th>Executable</th>
+            <th title="The number of unique obfuscation types that apply to the executable.">Obfuscation types</th>
+            {%- for item in site.mapping %}
+            <th title="{{item[1].description | escape}}">{{item[1].name}}</th>
+            {%- endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {%- assign arrs = "" %}
+{%- for entries in site.executables -%}
+    {%- assign page = entries.entries | first %}
+    {% if page.platform == 'mac' %}
+        {% capture name %}<td><a href="{{ entries.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias| first}}</code>){% endif%}</td>{% endcapture %}
+
+        {%- capture output -%}
+        {%- assign item_count = 0%}
+        {%- for item in site.mapping -%}
+            {%- assign x = item[0] -%}
+            {%- assign details = page.parameters.modifiers[x] -%}
+            <td>{%if details%}{% if x!= "Sed" or details.SedStatements contains "s/a/" or details.SedStatements contains "s/A/" or details.SedStatements contains "s/s/" %}✅{% assign item_count = item_count | plus: 1 %}{%endif%}{%endif-%}</td>
+        {%- endfor -%}
+        {%- endcapture -%}
+
+        {%- capture items -%}<td>{{item_count}}</td>{%- endcapture -%}
+
+        {% assign arr = items | append:"|||" | append:name | append:"|||" | append: output -%}
+        {% assign arrs = arrs | append:arr | append: "***" -%}
+    {% endif %}
+{%- endfor -%}
+{%- assign arrs = arrs | split: "***" | sort | reverse -%}
+{%- for line in arrs %}
+        <tr>
+        {%- assign sections = line | split: "|||" -%}
+        {{-sections[1]-}}
+        {{-sections[0]-}}
+        {{-sections[2]-}}
+        </tr>
+{%- endfor %}
+    </tbody>
+</table>
+</div>

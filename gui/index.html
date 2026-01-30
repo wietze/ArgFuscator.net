@@ -9,7 +9,7 @@ header: |
                                 <div id="tokens"></div>
                                 <div class="controls">
                                     <a class="button button-primary collapsed" id="button-profile" aria-haspopup="listbox" aria-expanded="false" role="combobox" tabindex="3" aria-controls="menu-profiles"><strong><span id="profiles-available">0</span> profiles available ⚠️</strong></a>
-                                            <menu class="context-menu" id="menu-profiles" aria-labelledby="button-template" tabindex="-1" role="listbox"></menu>
+                                    <menu class="context-menu" id="menu-profiles" aria-labelledby="button-template" tabindex="-1" role="listbox"></menu>
 
                                     <a class="button button-primary" id="obfuscation-run" tabindex="1"><strong>Apply obfuscation</strong></a>
                                 </div>
@@ -30,7 +30,10 @@ header: |
 
         <fieldset>
             <legend>Output</legend>
-            <div id="output-command"></div>
+            <div class="output-controls">
+                <button type="button" class="button button-primary collapsed" id="button-copy">Copy 📋</button>
+                <div id="output-command"></div>
+            </div>
         </fieldset>
 
         <fieldset class="collapsible">
@@ -44,10 +47,10 @@ header: |
                             {% assign operating_systems = "windows,linux,mac" | split: ',' %}
                             {% for os in operating_systems %}
                             <strong>{{os | capitalize}}</strong>
-                                {% for entry in site.executables -%}
-                                {% assign profile = entry.profiles | where: "platform",os %}
-                                    {%- if profile.size > 0 %}
-                            <li role="option" id="format_{{ entry.url | replace:'/executables/', '' |replace:'/','_' | replace:'.html','' }}" data-target="{{ entry.url|replace:'executables/','assets/models/'|replace:'.html', '.json'|relative_url }}"{% if entry.alias %} data-alias="{{ entry.alias }}"{%endif%}>{{ entry.slug }}{% if os == 'windows' %}.exe{% endif %}</li>
+                                {% for entries in site.executables -%}
+                                {% assign entry = entries.entries | first -%}
+                                {%- if entry.platform == os -%}
+                            <li role="option" id="format_{{ entries.url | replace:'/executables/', '' |replace:'/','_' | replace:'.html','' }}" data-target="{{ entries.url|replace:'executables/','assets/models/'|replace:os,''|replace:'.html', '.json'|relative_url }}"{% if entry.alias %} data-alias="{{ entry.alias | first }}"{%endif%}>{{ entries.slug }}{% if os == 'windows' %}.exe{% endif %}</li>
                                     {%- endif -%}
                                 {%- endfor %}
                             {%- endfor %}

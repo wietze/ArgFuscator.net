@@ -1,7 +1,8 @@
 {
     "versions": {"argfuscator": "2.0", "format": "2.0"},
     "profiles":
-    [{"executableVersion": "10.0.22621.2506",
+    [{"executableVersion":"3.2.5","platform":"linux","operatingSystem":"Xubuntu","operatingSystemVersion":"24.04","parameters":{"command":[{"command":"at"},{"argument":"-t"},{"value":"203001010101"},{"argument":"-q"},{"value":"a"},{"argument":"-m"},{"argument":"-v"},{"argument":"-f"},{"path":"/tmp/whoami.at"}],"modifiers":{"Shorthands":{"AppliesTo":["argument"],"Probability":"0.5","CaseSensitive":true},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true,"ValidFilePaths":true},"ReorderArgs":{"AppliesTo":["argument"],"Probability":"0.5","CombineShortForm":true,"RandomiseOrder":true,"SwapLongShortForm":false,"InsertRedundantShortforms":true}},"arguments":[{"Arguments":["-V"],"ValueCount":0},{"Arguments":["-q"],"ValueCount":1},{"Arguments":["-m"],"ValueCount":0},{"Arguments":["-M"],"ValueCount":0},{"Arguments":["-u"],"ValueCount":1},{"Arguments":["-f"],"ValueCount":1},{"Arguments":["-t"],"ValueCount":1},{"Arguments":["-l"],"ValueCount":0},{"Arguments":["-r","-d"],"ValueCount":0},{"Arguments":["-b"],"ValueCount":0},{"Arguments":["-v"],"ValueCount":0},{"Arguments":["-c"],"ValueCount":0},{"Arguments":["-o"],"ValueCount":1}]}},
+    {"executableVersion": "10.0.22621.2506",
       "platform": "windows",
       "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",

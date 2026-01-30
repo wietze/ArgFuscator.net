@@ -14,15 +14,47 @@ function ObjectEquals(object_a: object, object_b: object): boolean {
     }); //order does not matter
 }
 
-function CheckChanged(targetElem: HTMLLIElement, newModifiers: object, oldDefaultModifiers: object[]): boolean {
+const ArgumentsToTextarea = (arguments: Argument[] | null): string => arguments ? arguments.map(x => x.Arguments.join(",") + " " + x.ValueCount + (x.Redundant ? " r" : "")).join('\n') : "";
+const JsonToArguments = (y: Record<string, any>[]): Argument[] => y.map(x => new Argument(x["Arguments"], x["ValueCount"], x["Redundant"]))
+
+const TextareaToJson = (argumentsContent: string, alwaysIncludeRedundant: boolean = false): Record<string, any>[] => {
+    let arguments_: Record<string, any>[] = [];
+    if (argumentsContent) {
+        argumentsContent.split('\n').forEach((line, index) => {
+            const found = line.match(/^\s*(\S+)\s+(\d+)(\s+r)?\s*$/)
+            if (found) {
+                let r: Record<string, any> = { "Arguments": found[1].split(','), "ValueCount": parseInt(found[2], 10) }
+                if (found[3])
+                    r["Redundant"] = true
+                else if (alwaysIncludeRedundant)
+                    r["Redundant"] = false
+                arguments_.push(r)
+            } else {
+                logUserError(`arguments-${index}`, `Accepted Arguments: could not parse line ${index + 1}, skipping`)
+            }
+        })
+    }
+    return arguments_
+}
+const ProfileParametersToArguments = (Input: ProfileParameters): Argument[] => Input && Input.arguments ? Input.arguments.map(x => new Argument(x["Arguments"], x["ValueCount"], x["Redundant"])) : []
+
+function CheckChanged(targetElem: HTMLLIElement, newModifiers: object, oldDefaultModifiers: object[], oldKnownArguments: Argument[], newKnownArguments: Argument[][]): boolean {
     const warningText = "You made changes to the default obfuscation options, but the new command you entered has different obfuscation settings.\nAre you sure you want to lose the changes you made?\n\nPress OK to discard your changes and apply the new configuration, or click Cancel to keep your configuration.";
 
     // User clicks a button that is different to the selected template
     if (targetElem.innerText.replace(".exe", "") != document.getElementById('template-selected').innerText.replace(".exe", "")) {
         let currentConfig = GetJsonContents(); // Get JSON object of current config
+
+        const currentDefinedArguments = document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value
+
         if (Object.keys(currentConfig).length === 0 // Current config is blank; no need to ask
-            || ObjectEquals(newModifiers, currentConfig) // Current config equals the target config, no need to ask
-            || oldDefaultModifiers?.some(oldDefaultModifier => ObjectEquals(oldDefaultModifier, currentConfig)) // current config equals the original config, no need to ask
+            || (
+                (ObjectEquals(newModifiers, currentConfig) // Current config equals the target config, no need to ask
+                    || oldDefaultModifiers?.some(oldDefaultModifier => ObjectEquals(oldDefaultModifier, currentConfig))) // current config equals the original config, no need to ask
+                && (currentDefinedArguments == '' || ObjectEquals(oldKnownArguments, TextareaToJson(currentDefinedArguments, true)) // Current config equals the target config, no need to ask
+                    || newKnownArguments?.some(x => ObjectEquals(x, TextareaToJson(currentDefinedArguments, true))))
+            )
+
         ) { // If any of these are true:
             return true; // proceed without asking
         } else { // If not, we should check with the user
@@ -80,24 +112,25 @@ function ApplyTemplate(InputFile: FileFormat | ProfileParameters, ProfileIndex: 
     var CommandOutput: HTMLTextAreaElement = document.getElementById("input-command") as HTMLTextAreaElement;
     // Reset all currently enabled modifiers
     document.querySelectorAll<HTMLInputElement>("input[id^=\"option-\"]:checked").forEach(p => p.click());
+    document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value = ""
 
 
     // Construct command
     let CurrentCommand = GetInputCommand()
 
     let Input: ProfileParameters = null;
-    if ("versions" in InputFile){
+    if ("versions" in InputFile) {
         let p = InputFile.profiles[ProfileIndex]
         Input = p.parameters;
         // Update label text
-        const selected_profile = `${p.parameters.command.filter((x): x is { command: string } => typeof x === "object" && x !== null && "command" in x)[0].command} ${p.executableVersion} tested on ${p.operatingSystem} ${p.operatingSystemVersion}`
-        document.getElementById("profile-selected").innerText = `Using profile for ${selected_profile}`
+        const selected_profile = `${p.parameters.command.filter((x): x is { command: string } => typeof x === "object" && x !== null && "command" in x)[0].command}${p.executableVersion ? " "+p.executableVersion : ""} tested on ${p.operatingSystem} ${p.operatingSystemVersion}`
+        document.getElementById("profile-selected").innerText = `Using profile for ${selected_profile}.`
     }
     else
         Input = InputFile
 
     // Set known arguments
-    Arguments = Input.arguments ? Input.arguments.map(x => new Argument(x["Arguments"], x["ValueCount"], x["Redundant"])) : [];
+    Arguments = ProfileParametersToArguments(Input);
 
     if (Object.keys(Input.modifiers).length == 0)
         logUserError("pattern-no-options", "Bummer! It looks like this executable does not have any known obfuscation options.", true)
@@ -127,6 +160,9 @@ function ApplyTemplate(InputFile: FileFormat | ProfileParameters, ProfileIndex: 
             LastTokenised.push(t);
         });
     }
+    // If applicable, set arguments
+    document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value = ArgumentsToTextarea(Input.arguments)
+
     UpdateTokens(Interactive);
 
     // Set options
@@ -167,13 +203,10 @@ function ApplyTemplate(InputFile: FileFormat | ProfileParameters, ProfileIndex: 
             }
         });
     });
-
-    // If applicable, set arguments
-    document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value = Input.arguments ? Input.arguments.map(x => x.Arguments.join(",") + " " + x.ValueCount).join('\n') : ""
 }
 
 function GetJsonContents(): object {
-    let modifiers = new Map<string, object>();
+    let modifiers = new Map<string, any>();
     document.querySelectorAll<HTMLInputElement>("input[type=checkbox][data-function]:checked").forEach(x => {
         let dataFunction = x.dataset['function'] as string;
         var settings = new Map<string, string | number | boolean | string[]>();
@@ -209,18 +242,7 @@ function GenerateConfigJsonFile(this: HTMLAnchorElement) {
 
     let modifiers = GetJsonContents();
 
-    let arguments_: object[] = [];
-    const argumentsContent = document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value
-    if (argumentsContent) {
-        argumentsContent.split('\n').forEach((line, index) => {
-            const found = line.match(/^(\S+)\s+(\d+)$/)
-            if (found) {
-                arguments_.push({ "Arguments": found[1].split(','), "ValueCount": parseInt(found[2], 10) })
-            } else {
-                logUserError(`arguments-${index}`, `Accepted Arguments: could not parse line ${index + 1}, skipping`)
-            }
-        })
-    }
+    let arguments_: Record<string, any>[] = TextareaToJson(document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value)
 
     if (Object.keys(modifiers).length == 0) {
         this.removeAttribute("href")
@@ -232,7 +254,7 @@ function GenerateConfigJsonFile(this: HTMLAnchorElement) {
         if (arguments_ && arguments_.length > 0) { output.set("arguments", arguments_) }
 
 
-        const jsonOutput = { "versions": { "argfuscator": "2.0", "format": "2.0" }, "profiles": [{ "executableVersion": "x.y.z", "platform": "Windows", "operatingSystem": "Windows", "operatingSystemVersion": "11 (24H2)", "parameters": Object.fromEntries(output.entries()) }] }
+        const jsonOutput = { "versions": { "argfuscator": "2.0", "format": "2.0" }, "profiles": [{ "executableVersion": "-", "platform": "-", "operatingSystem": "-", "operatingSystemVersion": "-", "parameters": Object.fromEntries(output.entries()) }] }
 
         this.href = 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(jsonEscapeNonAsci(JSON.stringify(jsonOutput)))));
     }

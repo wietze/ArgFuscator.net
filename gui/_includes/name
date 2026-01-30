@@ -1,1 +1,1 @@
-{{- include.page.profiles[0].parameters.command[0]['command'] | downcase | split:'\' | last | remove:'"' | remove:".exe" -}}
+{{- include.page.parameters.command[0]['command'] | downcase | split:'\' | last | remove:'"' | remove:".exe" -}}

@@ -10,7 +10,7 @@ class FilePathTransformer extends Modifier {
     private ExtraSlashes: boolean;
     private ValidFilePaths: boolean;
     private readonly Keywords: string[] = ["debug", "system32", "compile", "winsxs", "temp", "update"];
-    private readonly KeywordsNix: string[] = ["/bin", "/usr/bin", "/usr/sbin", "/etc", "/var", "/var/log", "/var/lib", "/tmp", "/home", "/proc", "/sys", "/usr/libexec", "/usr/share", "/usr/local", "/usr/local/bin", "/usr/local/lib", "/usr/local/share", "/var/spool",  "/var/local"]
+    private readonly KeywordsNix: string[] = ["/usr/bin", "/usr/sbin", "/etc", "/var", "/var/log", "/var/lib", "/tmp", "/usr/libexec", "/usr/share", "/usr/local"]
 
     constructor(InputCommand: Token[], ApplyTo: string[], Arguments: Argument[], Probability: string, PathTraversal: boolean, SubstituteSlashes: boolean, ExtraSlashes: boolean, ValidFilePaths:boolean) {
         super(InputCommand, ApplyTo, Arguments, Probability);

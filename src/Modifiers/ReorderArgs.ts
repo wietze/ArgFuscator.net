@@ -41,7 +41,7 @@ class ReorderArgs extends Modifier {
         if (this.SwapLongShortForm) {
             this.InputCommandTokens.forEach((Token) => {
                 let FoundArguments = this.Arguments?.filter(y => y.Arguments && y.Arguments.some(z => z == Token.GetStringContent())).map(y => y.Arguments.filter(z => z !== Token.GetStringContent()))
-                if (FoundArguments.length > 0 && FoundArguments[0].length > 0 && Modifier.CoinFlip(this.Probability)) {
+                if (FoundArguments?.length > 0 && FoundArguments[0].length > 0 && Modifier.CoinFlip(this.Probability)) {
                     Token.SetContent(Modifier.ChooseRandom(FoundArguments[0]).split(''));
                 }
             })
@@ -52,22 +52,30 @@ class ReorderArgs extends Modifier {
             this.InputCommandTokens.forEach((Token, index) => {
                 // Check if this is one of the mergeable tokens, and with probability merge it
                 if (This.IsMergeable(Token)) {
-                    // Find all upcoming mergable tokens
-                    let candidates = this.InputCommandTokens.slice(index + 1).filter(t => This.IsMergeable(t) && Modifier.CoinFlip(This.Probability))
-
                     // Create brand new token with the found one, plus all upcoming ones
                     let newContent = Token.GetContent()
-                    candidates.forEach(x => {
-                        newContent.push(...x.GetContent().slice(1))
-                        for(var i=0; true; i++){
-                            if (this.InsertRedundantShortforms && Modifier.CoinFlip(This.Probability * (0.9**i)))
+
+                    // Add redundant characters
+                    if (redundants.length > 0) {
+                        for (var i = 0; true; i++) {
+                            if (this.InsertRedundantShortforms && Modifier.CoinFlip(This.Probability * (0.9 ** i)))
                                 newContent.push(Modifier.ChooseRandom(redundants))
                             else
                                 break
                         }
+                    }
 
+                    // Find all upcoming mergable tokens
+                    let candidates = this.InputCommandTokens.slice(index + 1).filter(t => This.IsMergeable(t) && Modifier.CoinFlip(This.Probability))
+
+                    candidates.forEach(x => {
+                        newContent.push(...x.GetContent().slice(1))
                         x.SetContent([]) // Ensures token is 'removed'
                     })
+
+                    if(This.RandomiseOrder && Modifier.CommonOptionChars.includes(newContent[0].toString())){
+                        Modifier.Shuffle(newContent, 1)
+                    }
 
                     //Find short-form arguments that DO have a value; we can pick at most one, and only add them to the end.
                     let valueCandidates: [Token, Token][] = this.InputCommandTokens.slice(index + 1).map((t, i, a) => [t, (i + 1) < a.length ? a[i + 1] : null]);
@@ -90,6 +98,18 @@ class ReorderArgs extends Modifier {
                 // Check if this is one of the mergeable tokens, and with probability merge it
                 if (This.IsValueMergeable(Token) && (index + 1) < This.InputCommandTokens.length && Modifier.CoinFlip(This.Probability)) {
                     let newContent = Token.GetContent()
+
+                    // Add redundant characters
+                    if (redundants.length > 0) {
+                        for (var i = 0; true; i++) {
+                            if (this.InsertRedundantShortforms && Modifier.CoinFlip(This.Probability * (0.9 ** i)))
+                                newContent.splice(1, 0, Modifier.ChooseRandom(redundants))
+                            else
+                                break
+                        }
+                    }
+
+
                     newContent.push(...this.InputCommandTokens[index + 1].GetContent())
                     this.InputCommandTokens[index + 1].SetContent([])
                     Token.SetContent(newContent)

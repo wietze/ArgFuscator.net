@@ -2,29 +2,33 @@
 layout: general
 title: Entries
 ---
-<h2>All supported entries ({{ site.executables | size }})</h2>
+      <h2>All supported entries ({{ site.executables | size }})</h2>
 
-For a comparison of the obfuscation capabilities per executable, see <a href="{{ '/executables/comparison.html' | relative_url }}">comparisons</a>.
+      For a comparison of the obfuscation capabilities per executable, see <a href="{{ '/executables/comparison.html' | relative_url }}">comparisons</a>.
 
-<h3>Windows</h3>
-<ul class="dynamic-columns">
-{%- for page in site.executables %}
-  {% assign profile = page.profiles | where: "platform","windows" %}
-  {% if profile.size > 0 %}
-    <li><a href="{{ page.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}.exe</a>{% if page.alias %} (and <code>{{page.alias}}.exe</code>){% endif%}</li>
-    {% endif %}
-{%- endfor %}
-</ul>
+      <h3>Windows</h3>
+      <ul class="dynamic-columns">
+      {%- for entries in site.executables -%}
+      {% assign page = entries.entries | first %}
+        {% if page.platform == "windows" %}<li><a href="{{ entries.url | relative_url | replace: 'http:', 'https:'}}" title="See command-line obfuscation details for {% include name page=page %}.exe on Windows">{% include name page=page %}.exe</a>{% if page.alias %} (and <code>{{page.alias | first}}.exe</code>){% endif %}</li>
+        {% endif -%}
+      {%- endfor -%}
+      </ul>
 
-<h3>Linux</h3>
-<ul class="dynamic-columns">
-{%- for page in site.executables %}
-  {% assign profile = page.profiles | where: "platform","linux" %}
-  {% if profile.size > 0 %}
-    <li><a href="{{ page.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias}}</code>){% endif%}</li>
-    {% endif %}
-{%- endfor %}
-</ul>
+      <h3>Linux</h3>
+      <ul class="dynamic-columns">
+      {%- for entries in site.executables -%}
+      {% assign page = entries.entries | first %}
+        {% if page.platform == "linux" %}<li><a href="{{ entries.url | relative_url | replace: 'http:', 'https:'}}" title="See command-line obfuscation details for '{% include name page=page %}' on Linux">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias | first}}</code>){% endif %}</li>
+        {% endif -%}
+      {%- endfor -%}
+      </ul>
 
-<h3>MacOS</h3>
-Coming soon.
+      <h3>macOS</h3>
+      <ul class="dynamic-columns">
+      {%- for entries in site.executables -%}
+      {% assign page = entries.entries | first %}
+        {% if page.platform == "mac" %}<li><a href="{{ entries.url | relative_url | replace: 'http:', 'https:'}}" title="See command-line obfuscation details for '{% include name page=page %}' on macOS">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias | first}}</code>){% endif %}</li>
+        {% endif -%}
+      {%- endfor -%}
+      </ul>

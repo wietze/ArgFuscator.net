@@ -37,7 +37,7 @@ description:
     <link rel="stylesheet" type="text/css" href="{{ '/assets/css/style.css' | relative_url }}">
 
     <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://visit.argfuscator.net/ ; connect-src https://lolbas-project.github.io/api/ https://visit.argfuscator.net/ 'self';img-src 'self' https://visit.argfuscator.net/ ;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://visit.argfuscator.net/ ; connect-src https://lolbas-project.github.io/api/ https://visit.argfuscator.net/ https://gtfobins.org/api.json https://raw.githubusercontent.com/infosecB/LOOBins/refs/heads/main/src/loobins_stix.json 'self';img-src 'self' https://visit.argfuscator.net/ ;">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:description" content="{% if page.layout == 'entry'%}{{ title }} is vulnerable to various kinds of command-line obfuscation; create your own obfuscated command lines with {{ site.title }}.{%else%}{{ page.description | replace:'__SITE__',site.title }}{%endif%}" />
     <meta property="og:image" content="{{ logo | absolute_url }}" />

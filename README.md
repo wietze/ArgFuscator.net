@@ -4,7 +4,7 @@ ArgFuscator is an open-source, stand-alone web application that helps generate o
 
 👉 **Use the interactive version of ArgFuscator on [ArgFuscator.net](https://argfuscator.net/)** 🚀
 
-👾 _Find the cross-platform PowerShell version on [wietze/Invoke-Argfuscator](https://www.github.com/wietze/Invoke-Argfuscator)._
+👾 _Find the offline, cross-platform PowerShell version on [wietze/Invoke-Argfuscator](https://www.github.com/wietze/Invoke-Argfuscator)._
 
 ## One-sentence pitch
 

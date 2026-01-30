@@ -7,7 +7,6 @@ var LoadedConfigModifiers: Map<string, FileFormat> = new Map();
 
 class FileFormat {
     profiles: Array<Profile>
-    alias?: string
     versions: Versions
 }
 
@@ -21,6 +20,8 @@ class Profile {
     operatingSystem: string
     operatingSystemVersion: string
     executableVersion: string
+    platform: string
+    alias?: string[]
 }
 
 class ProfileParameters {
@@ -41,6 +42,7 @@ function UpdateTokens(Interactive: boolean = false): void {
     removeUserErrors();
     ConfigTokenHTML = document.querySelector("div#tokens");
     OutputTokenHTML = document.querySelector('div#output-command');
+    Arguments = JsonToArguments(TextareaToJson(document.querySelector<HTMLTextAreaElement>("textarea#accepted-arguments-list").value))
     LastTokenised = Modifier.CommandTokenise(GetInputCommand(), Arguments, Interactive ? null : (document.getElementById("menu-templates") as HTMLMenuElement));
 
     if (document.getElementById("feeling-lucky"))
@@ -55,6 +57,7 @@ function UpdateTokens(Interactive: boolean = false): void {
 function UpdateUITokens(Tokenised: Token[]): void {
     ConfigTokenHTML.innerHTML = "";
     OutputTokenHTML.innerHTML = "";
+    document.getElementById("button-copy")?.classList.add("collapsed")
     Tokenised?.forEach((Token, Index, Array) => {
         var parentElement = document.createElement('div');
         parentElement.classList.add("token-holder");
@@ -75,6 +78,7 @@ function UpdateUITokens(Tokenised: Token[]): void {
         if (Index < Array.length - 1 && !Modifier.ValueChars.some(y => Token.GetContent().reverse()[0] == y)) {
             OutputTokenHTML.appendChild(SpaceElement);
         }
+        document.getElementById("button-copy")?.classList.remove("collapsed")
     });
 }
 
@@ -88,26 +92,37 @@ function ApplyObfuscation(): void {
         }
     }
 
-    LastTokenised?.forEach(Token => Token.Reset());
+    for(var attempts=0; attempts<3; attempts++){
+        const preObfuscation = LastTokenised.map(x => x.GetStringContent()).join(" ")
+        LastTokenised?.forEach(Token => Token.Reset());
 
-    // Obtain selected options
-    let SelectedOptions = document.querySelectorAll("input[data-function][id^=\"option-\"]:checked") as NodeListOf<HTMLInputElement>;
-    if (SelectedOptions?.length <= 0) { logUserError("pattern-no-options", "There are no transformations enabled in the options section below; without this, no obfuscation will be applied.", true) }
-    SelectedOptions.forEach(Element => {
-        let ClassName = Element.dataset.function as string;
-        let ClassInstance: Modifier = Object.create((window as any)[ClassName].prototype);
+        // Obtain selected options
+        let SelectedOptions = document.querySelectorAll("input[data-function][id^=\"option-\"]:checked") as NodeListOf<HTMLInputElement>;
+        if (SelectedOptions?.length <= 0) { logUserError("pattern-no-options", "There are no transformations enabled in the options section below; without this, no obfuscation will be applied.", true) }
+        SelectedOptions.forEach(Element => {
+            let ClassName = Element.dataset.function as string;
+            let ClassInstance: Modifier = Object.create((window as any)[ClassName].prototype);
 
-        let IncludedTypes = JSON.parse(document.getElementById(Element.id + "_arg0").dataset.included_types);
-        let ClassInstanceArguments: any[] = [LastTokenised, IncludedTypes, Arguments];
+            let IncludedTypes = JSON.parse(document.getElementById(Element.id + "_arg0").dataset.included_types);
+            let ClassInstanceArguments: any[] = [LastTokenised, IncludedTypes, Arguments];
 
-        let SelectedOptionArguments = document.querySelectorAll("input[id^=\"" + Element.id + "_arg\"], textarea[id^=\"" + Element.id + "_arg\"]") as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
-        SelectedOptionArguments.forEach(OptionElement => {
-            ClassInstanceArguments.push((OptionElement instanceof HTMLInputElement && OptionElement.type == 'checkbox') ? OptionElement.checked : OptionElement.value);
+            let SelectedOptionArguments = document.querySelectorAll("input[id^=\"" + Element.id + "_arg\"], textarea[id^=\"" + Element.id + "_arg\"]") as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
+            SelectedOptionArguments.forEach(OptionElement => {
+                ClassInstanceArguments.push((OptionElement instanceof HTMLInputElement && OptionElement.type == 'checkbox') ? OptionElement.checked : OptionElement.value);
+            });
+
+            ClassInstance.constructor.apply(ClassInstance, ClassInstanceArguments);
+            ClassInstance.GenerateOutput();
         });
 
-        ClassInstance.constructor.apply(ClassInstance, ClassInstanceArguments);
-        ClassInstance.GenerateOutput();
-    });
+        const postObfuscation = LastTokenised.map(x => x.GetStringContent()).join(" ")
+        if(preObfuscation!=postObfuscation){
+            if(preObfuscation.toLowerCase() == postObfuscation.toLowerCase())
+                logUserError("no-obfuscation", "Other than upper/lower casing, it looks like nothing else was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", false);
+            return
+        }
+    }
+    logUserError("no-obfuscation", "It looks like nothing was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", true);
 }
 
 function GenerateObfuscationOptionsHTML() {
@@ -221,8 +236,10 @@ function OnLoad() {
     // Main box
     document.getElementById("input-command")?.addEventListener("keyup", debounce(() => UpdateTokens(), 1000));
     document.getElementById("input-command")?.addEventListener("paste", () => debounce(() => UpdateTokens(), 0));
+    document.getElementById("accepted-arguments-list")?.addEventListener("keyup", debounce(() => UpdateTokens(), 1000));
     document.getElementById("obfuscation-run")?.addEventListener("click", () => ApplyObfuscation());
     addEnterListener(document.getElementById("obfuscation-run"));
+    document.getElementById("button-copy")?.addEventListener("click", _ => { navigator.clipboard.writeText(OutputTokenHTML.innerText?.replace(/\xA0/g, ' ')); const previousText = document.getElementById("button-copy").innerText; document.getElementById("button-copy").innerText = "Copied!"; debounce(() => { document.getElementById("button-copy").innerText = previousText }, 3000)() });
 
     // Main box: feeling lucky
     document.getElementById("feeling-lucky")?.addEventListener("click", _ => {
@@ -290,7 +307,7 @@ function OnLoad() {
             let currentlySelectedContextMenuItem = document.querySelector<HTMLLIElement>("#menu-templates>li[data-active='true']");
             Promise.all([FetchJsonFileContents(currentlySelectedContextMenuItem?.dataset.target), FetchJsonFileContents(clickedContextMenuItem?.dataset.target)])
                 .then(([oldDefaultModifiers, newModifiers]) => {
-                    if (CheckChanged(clickedContextMenuItem, newModifiers?.profiles[0].parameters.modifiers, oldDefaultModifiers?.profiles.map(x => x.parameters.modifiers))) {
+                    if (CheckChanged(clickedContextMenuItem, newModifiers?.profiles[0].parameters.modifiers, oldDefaultModifiers?.profiles.map(x => x.parameters.modifiers), ProfileParametersToArguments(newModifiers?.profiles[0].parameters), oldDefaultModifiers?.profiles.map(x => ProfileParametersToArguments(x.parameters)))) {
                         clickedContextMenuItem.parentNode.childNodes.forEach((x: HTMLElement) => { x.ariaSelected = 'false'; if (x.dataset) x.dataset['active'] = "" });
 
                         if (!clickedContextMenuItem.dataset['function']) {
@@ -299,14 +316,8 @@ function OnLoad() {
                             document.getElementById("template-selected").innerText = clickedContextMenuItem.innerText;
 
                             // Populate profile selector menu
-                            let ContextMenuItemClickHandler = (i: number) => {
-                                if (i < newModifiers.profiles.length) {
-                                    SetProfile(newModifiers.profiles, i, false);
-                                    // document.dispatchEvent(new MouseEvent("mousedown", { clientX: 1, clientY: 1, bubbles: true }))
-                                }
-                            }
-
-                            UpdateContextMenu((newModifiers?.profiles.map(p => `${p.parameters.command.filter((x): x is { command: string } => typeof x === "object" && x !== null && "command" in x)[0].command} ${p.executableVersion} tested on ${p.operatingSystem} ${p.operatingSystemVersion}`)).concat("Add a new profile..."), "profiles", ContextMenuItemClickHandler);
+                            let ContextMenuItemClickHandler = (i: number) => { if (i < newModifiers.profiles.length) SetProfile(newModifiers.profiles, i, false) }
+                            UpdateContextMenu((newModifiers?.profiles.map(p => `${p.parameters.command.filter((x): x is { command: string } => typeof x === "object" && x !== null && "command" in x)[0].command}${p.executableVersion ? " " + p.executableVersion : ""} tested on ${p.operatingSystem} ${p.operatingSystemVersion}`)), "profiles", ContextMenuItemClickHandler);
 
                             document.getElementById("profiles-available").innerText = (newModifiers?.profiles.length || 0).toString();
                             const profileCount = newModifiers?.profiles.length || 0;
@@ -318,7 +329,7 @@ function OnLoad() {
                             }
 
                             // By default, select and apply the first profile
-                            SetProfile(newModifiers.profiles, 0, false)
+                            SetProfile(newModifiers.profiles, (LastTokenised && LastTokenised.length > 0 && LastTokenised[0].GetStringContent()?.toLowerCase().endsWith(".exe")) ? newModifiers.profiles.indexOf(newModifiers.profiles.find(x => x.platform == "windows")) : 0, false)
                         } else {
                             document.getElementById("template-selected").innerText = "(none)";
                             document.getElementById("profile-selected").innerText = "";
@@ -375,17 +386,26 @@ function OnLoad() {
     // Entry pages
     if (document.getElementById("input-command").dataset.target !== undefined) {
         FetchJsonFileContents(document.getElementById("input-command").dataset.target).then(newModifiers => {
-            ApplyTemplate({ versions: { format: "2.0" }, profiles: newModifiers.profiles } as FileFormat, 0, false);
+            ApplyTemplate({ versions: { format: "2.0" }, profiles: newModifiers.profiles } as FileFormat, (Number(document.getElementById("input-command").dataset.profileId) || 0), false);
             document.querySelectorAll<HTMLSpanElement>("code[data-process]").forEach(x => {
                 // Create modifier
                 const ID = document.querySelector(`input[data-function="${x.dataset.process}"]`).id;
 
                 let ClassInstance: Modifier = Object.create((window as any)[x.dataset.process].prototype);
-                let ClassInstanceArguments: any[] = [null, null];
+                let ClassInstanceArguments: any[] = [null, null, Arguments];
                 let SelectedOptionArguments = document.querySelectorAll("input[id^=\"" + ID + "_arg\"], textarea[id^=\"" + ID + "_arg\"]") as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
                 SelectedOptionArguments.forEach(OptionElement => {
                     ClassInstanceArguments.push((OptionElement instanceof HTMLInputElement && OptionElement.type == 'checkbox') ? OptionElement.checked : OptionElement.value);
                 });
+
+                // Populate profile selector menu
+                const profiles = newModifiers?.profiles.filter(x => x.platform == document.querySelector<HTMLHeadingElement>('section>h1')?.dataset?.platform)
+                let ContextMenuItemClickHandler = (i: number) => { if (i < newModifiers.profiles.length) SetProfile(profiles, i, false) }
+                UpdateContextMenu((profiles.map(p => `${p.parameters.command.filter((x): x is { command: string } => typeof x === "object" && x !== null && "command" in x)[0].command}${p.executableVersion ? " " + p.executableVersion : ""} tested on ${p.operatingSystem} ${p.operatingSystemVersion}`)), "profiles", ContextMenuItemClickHandler);
+
+                // By default, select and apply the first profile
+                SetProfile(newModifiers.profiles, (LastTokenised && LastTokenised.length > 0 && LastTokenised[0].GetStringContent()?.toLowerCase().endsWith(".exe")) ? newModifiers.profiles.indexOf(newModifiers.profiles.find(x => x.platform == "windows")) : 0, false)
+
 
                 // Create modifier instance
                 let y = ClassInstance.constructor.apply(ClassInstance, ClassInstanceArguments);

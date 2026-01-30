@@ -129,7 +129,7 @@ abstract class Modifier {
 
         if (document.getElementById("input-command")?.dataset.program !== undefined) {
             let expectedProgram = document.getElementById("input-command")?.dataset.program?.split(".")[0];
-            if (!Tokens[0].GetStringContent().toLowerCase().includes(expectedProgram.toLowerCase())) {
+            if (!(new RegExp(`\\b${expectedProgram.toLowerCase()}\\b`).test(Tokens[0].GetStringContent().toLowerCase()))) {
                 logUserError("unexpected-program", `Are you sure you pasted a valid <code>${expectedProgram}</code> command? To obfuscate the command-line arguments of other executables, click <a href="/">here</a>.`)
             }
         }
@@ -176,6 +176,14 @@ abstract class Modifier {
             if (token.toLowerCase() == 'powershell.exe' || token.toLowerCase() == 'powershell' || token.toLowerCase() == 'pwsh.exe' || token.toLowerCase() == 'pwsh')
                 logUserError("pattern-cmd", 'We will proceed with obfuscating the provided PowerShell command-line arguments, but not any PowerShell code, as this goes beyond the scope of this project - please checkout <a href="https://github.com/danielbohannon/Invoke-Obfuscation" target="_blank">Invoke-Obfuscation</a> for this!');
 
+            const shell = token.toLowerCase().match(/(ba|z|da)?sh/)
+            if (shell != null)
+                logUserError("pattern-cmd", `We will proceed with obfuscating the provided <code>${shell[0]}</code> command-line arguments, but not any <code>${shell[0]}</code> code, as this goes beyond the scope of this project. Please checkout e.g. <a href="https://github.com/Bashfuscator/Bashfuscator" target="_blank">Bashfuscator</a> for this!`);
+
+            if (token == "sudo")
+                logUserError("pattern-sudo", `Note that this will obfuscate the 'outer' <code>sudo</code> command, not the 'inner' command it might execute. To obfuscate the 'inner' command, remove <code>sudo</code>.`);
+
+
             if (!found) {
                 let token_code = document.createElement("code")
 
@@ -204,7 +212,7 @@ abstract class Modifier {
             }
 
             if (_TokenText.match(/^(?:\\\\[^\\]+|[a-zA-Z]:|\.[\\/])((?:\\[^\\]+)+\\)?([^<>:]*)$/) || _TokenText.match(/^[^<>:]+\.[a-zA-Z0-9]{2,4}$/)) x.SetType('path'); // Windows file path format
-            if (_TokenText.match(/^\/[a-zA-Z0-9-_ ]+\/[a-zA-Z0-9-_\/ ]+$/)) x.SetType('path'); // Linux file path format
+            if (_TokenText.match(/^\/[a-zA-Z0-9\-_ .]+\/[a-zA-Z0-9\-_\/ .]+$/)||_TokenText=="/tmp") x.SetType('path'); // Linux file path format
             if (_TokenText == '-') x.SetType('path') // stdin
             if (_TokenText.match(/^(HKLM|HKCC|HKCR|HKCU|HKU|HKEY_(LOCAL_MACHINE|CURRENT_CONFIG|CLASSES_ROOT|CURRENT_USER|USERS))\\?/i)) x.SetType('disabled'); // Windows Registry
             if (_TokenText.startsWith('http:') || _TokenText.startsWith('https:') || _TokenText.match(/[12]?\d?\d\.[12]?\d?\d\.[12]?\d?\d\.[12]?\d?\d/)) x.SetType('url'); //URLs (including IP addresses)

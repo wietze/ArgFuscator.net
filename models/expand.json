@@ -1,7 +1,7 @@
 {
     "versions": {"argfuscator": "2.0", "format": "2.0"},
     "profiles":
-    [{"executableVersion": "5.0.1.1",
+    [{"executableVersion":"(GNU coreutils) 9.4","platform":"linux","operatingSystem":"Xubuntu","operatingSystemVersion":"24.04","parameters":{"command":[{"command":"expand"},{"argument":"--tabs"},{"value":"4"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true,"ValidFilePaths":true},"ReorderArgs":{"AppliesTo":["argument"],"Probability":"0.5","CombineShortForm":true,"RandomiseOrder":true,"SwapLongShortForm":true,"InsertRedundantShortforms":true},"Shorthands":{"AppliesTo":["argument"],"Probability":"0.5","CaseSensitive":true}},"arguments":[{"Arguments":["-i","--initial"],"ValueCount":0},{"Arguments":["-t","--tabs"],"ValueCount":1},{"Arguments":["--help"],"ValueCount":0}]}}, {"executableVersion": "5.0.1.1",
       "platform": "windows",
       "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",

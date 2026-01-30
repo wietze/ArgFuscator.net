@@ -1,7 +1,10 @@
 {
     "versions": {"argfuscator": "2.0", "format": "2.0"},
     "profiles":
-    [{"executableVersion": "10.0.22621.4111",
+    [
+      {"executableVersion":"Net-tools 2.10","platform":"linux","operatingSystem":"Xubuntu","operatingSystemVersion":"24.04","parameters":{"command":[{"command":"arp"},{"argument":"-a"},{"argument":"-v"},{"argument":"-n"},{"url":"10.185.154.1"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true,"ValidFilePaths":true},"ReorderArgs":{"AppliesTo":["argument"],"Probability":"0.5","CombineShortForm":true,"RandomiseOrder":true,"SwapLongShortForm":true,"InsertRedundantShortforms":true},"Shorthands":{"AppliesTo":["argument"],"Probability":"0.5","CaseSensitive":true},"UrlTransformer":{"AppliesTo":["url"],"Probability":"0.5","LeaveOutProtocol":false,"LeaveOutDoubleSlashes":false,"SubstituteSlashes":false,"IpToHex":true,"PathTraversal":false}},"arguments":[{"Arguments":["-v","--verbose"],"ValueCount":0},{"Arguments":["-n","--numeric"],"ValueCount":0},{"Arguments":["-H","-t","--hw-type"],"ValueCount":1},{"Arguments":["-a"],"ValueCount":0},{"Arguments":["-e"],"ValueCount":0},{"Arguments":["-D","--use-device"],"ValueCount":0},{"Arguments":["-i","--device"],"ValueCount":1},{"Arguments":["-f","--file"],"ValueCount":1},{"Arguments":["-a"],"ValueCount":0},{"Arguments":["-e"],"ValueCount":0},{"Arguments":["-s","--set"],"ValueCount":2},{"Arguments":["-d","--delete"],"ValueCount":1},{"Arguments":["-V","--version"],"ValueCount":0}]}},
+
+      {"executableVersion": "10.0.22621.4111",
       "platform": "windows",
       "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",
