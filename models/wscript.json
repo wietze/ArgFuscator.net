@@ -5,6 +5,6 @@
       "platform": "windows",
       "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command":[{"command":"wscript"},{"argument":"//e:"},{"value":"vbscript"},{"path":"c:\\windows\\test\\file.txt"}],"modifiers":{"Regex":{"AppliesTo":["argument"],"Probability":"0.5","RegexMatch":"/?/","RegexReplace":"//","CaseSensitive":false},"Sed":{"AppliesTo":["argument"],"Probability":"0.5","SedStatements":"s/\\/\\//\\/|\\/\\//"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["path","url","argument","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["path","command","value","url","argument"],"Probability":"0.5"}}}}
+      "parameters": {"command":[{"command":"wscript"},{"argument":"//e:"},{"value":"vbscript"},{"path":"c:\\windows\\temp\\file.txt"}],"modifiers":{"Regex":{"AppliesTo":["argument"],"Probability":"0.5","RegexMatch":"/?/","RegexReplace":"//","CaseSensitive":false},"Sed":{"AppliesTo":["argument"],"Probability":"0.5","SedStatements":"s/\\/\\//\\/|\\/\\//"},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["path","url","argument","value"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["path","command","value","url","argument"],"Probability":"0.5"}}}}
     ]
 }

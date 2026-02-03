@@ -5,6 +5,6 @@
       "platform": "windows",
       "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command": [{"command": "nbtstat"}, {"argument": "/RR"}], "modifiers": {"OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["/", "-"], "AppliesTo": ["argument"]}, "Regex": {"Probability": "0.6", "RegexMatch": "^([/-])([a-z]+)$", "RegexReplace": "$1r$2", "CaseSensitive": false, "AppliesTo": ["path", "url", "argument", "value"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}}
+      "parameters": {"command": [{"command": "nbtstat"}, {"argument": "/c"}], "modifiers": {"OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["/", "-"], "AppliesTo": ["argument"]}, "Regex": {"Probability": "0.6", "RegexMatch": "^([/-])([a-z]+)$", "RegexReplace": "$1r$2", "CaseSensitive": false, "AppliesTo": ["path", "url", "argument", "value"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}}
     ]
 }

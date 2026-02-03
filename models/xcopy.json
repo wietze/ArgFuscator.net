@@ -5,6 +5,6 @@
       "platform": "windows",
       "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command":[{"command":"xcopy"},{"argument":"/f"},{"argument":"/y"},{"path":"c:\\windows\\temp\\file.ini"},{"path":"c:\\windows\\temp"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["path","url"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","path","url","value","argument"],"Probability":"0.5"}}}}
+      "parameters": {"command":[{"command":"xcopy"},{"argument":"/f"},{"argument":"/y"},{"path":"c:\\windows\\temp\\file.ext"},{"path":"c:\\windows\\temp\\file2.ext"}],"modifiers":{"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":false,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["path","url"],"Probability":"0.5"},"RandomCase":{"AppliesTo":["command","path","url","value","argument"],"Probability":"0.5"}}}}
     ]
 }

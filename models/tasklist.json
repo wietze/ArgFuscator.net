@@ -5,6 +5,6 @@
       "platform": "windows",
       "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command": [{"command": "tasklist"}, {"argument": "/fi"}, {"path": "\"IMAGENAME eq process.exe\""}, {"argument": "/FO"}, {"value": "csv"}, {"argument": "/NH"}], "modifiers": {"RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}}
+      "parameters": {"command": [{"command": "tasklist"}, {"argument": "/fi"}, {"path": "\"IMAGENAME eq powershell.exe\""}, {"argument": "/FO"}, {"value": "csv"}, {"argument": "/NH"}], "modifiers": {"RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}}}}
     ]
 }

@@ -5,6 +5,6 @@
       "platform": "windows",
       "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",
-      "parameters": {"command": [{"command": "pnputil"}, {"argument": "/export-driver"}, {"path": "file.inf"}, {"path": "c:\\windows\\temp\\"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}}}}
+      "parameters": {"command": [{"command": "pnputil"}, {"argument": "/export-driver"}, {"path": "*"}, {"path": "c:\\windows\\temp\\"}], "modifiers": {"FilePathTransformer": {"Probability": "0.5", "PathTraversal": true, "SubstituteSlashes": true, "ExtraSlashes": true, "AppliesTo": ["path"]}, "OptionCharSubstitution": {"Probability": "0.5", "OutputOptionChars": ["-", "/"], "AppliesTo": ["argument"]}, "QuoteInsertion": {"Probability": "0.5", "AppliesTo": ["path", "url", "argument", "value"]}, "RandomCase": {"Probability": "0.5", "AppliesTo": ["argument", "path", "command", "value"]}}}}
     ]
 }

@@ -10,6 +10,10 @@
 }, {"executableVersion": "8.10.1",
       "platform": "windows",
       "operatingSystem": "Windows",
+      "operatingSystemVersion": "11 (25H2)",
+      "parameters": {"command": [{"command": "curl"}, {"url": "https://example.org/file.ext"}, {"argument": "--output"}, {"path": "output.ext"}],"modifiers":{"RandomCase":{"AppliesTo":["command","path"],"Probability":"0.5"},"UrlTransformer":{"AppliesTo":["url"],"Probability":"0.5","LeaveOutProtocol":false,"LeaveOutDoubleSlashes":false,"SubstituteSlashes":false,"IpToHex":true,"PathTraversal":true},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["value","url","path"],"Probability":"0.5"}}}},{"executableVersion": "8.10.1",
+      "platform": "windows",
+      "operatingSystem": "Windows",
       "operatingSystemVersion": "11 (23H2)",
       "parameters": {"command": [{"command": "curl"}, {"url": "https://example.org/file.ext"}, {"argument": "--output"}, {"path": "output.ext"}],"modifiers":{"RandomCase":{"AppliesTo":["argument","command","path"],"Probability":"0.5"},"UrlTransformer":{"AppliesTo":["url"],"Probability":"0.5","LeaveOutProtocol":false,"LeaveOutDoubleSlashes":false,"SubstituteSlashes":false,"IpToHex":true,"PathTraversal":true},"FilePathTransformer":{"AppliesTo":["path"],"Probability":"0.5","PathTraversal":true,"SubstituteSlashes":true,"ExtraSlashes":true},"QuoteInsertion":{"AppliesTo":["value","url","path"],"Probability":"0.5"}}}},
 
