@@ -118,11 +118,11 @@ function ApplyObfuscation(): void {
         const postObfuscation = LastTokenised.map(x => x.GetStringContent()).join(" ")
         if(preObfuscation!=postObfuscation){
             if(preObfuscation.toLowerCase() == postObfuscation.toLowerCase())
-                logUserError("no-obfuscation", "Other than upper/lower casing, it looks like nothing else was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", false);
+                logUserError("pattern-no-options", "Other than upper/lower casing, it looks like nothing else was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", false);
             return
         }
     }
-    logUserError("no-obfuscation", "It looks like nothing was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", true);
+    logUserError("pattern-no-options", "It looks like nothing was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", true);
 }
 
 function GenerateObfuscationOptionsHTML() {

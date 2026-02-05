@@ -58,8 +58,10 @@ title: Comparison of entries
         <tr>
             <th>Executable</th>
             <th title="The number of unique obfuscation types that apply to the executable.">Obfuscation types</th>
-            {%- for item in site.mapping %}
+            {%- for item in site.mapping -%}
+            {%- if item[1].name != 'Character Substitution' and item[1].name != 'Quote Insertion' and item[1].name != 'Option Character Substitution' %}
             <th title="{{item[1].description | escape}}">{{item[1].name}}</th>
+            {%- endif -%}
             {%- endfor %}
         </tr>
     </thead>
@@ -73,9 +75,11 @@ title: Comparison of entries
         {%- capture output -%}
         {%- assign item_count = 0%}
         {%- for item in site.mapping -%}
+        {%- if item[1].name != 'Character Substitution' and item[1].name != 'Quote Insertion' and item[1].name != 'Option Character Substitution' -%}
             {%- assign x = item[0] -%}
             {%- assign details = page.parameters.modifiers[x] -%}
             <td>{%if details%}{% if x!= "Sed" or details.SedStatements contains "s/a/" or details.SedStatements contains "s/A/" or details.SedStatements contains "s/s/" %}✅{% assign item_count = item_count | plus: 1 %}{%endif%}{%endif-%}</td>
+        {%- endif -%}
         {%- endfor -%}
         {%- endcapture -%}
 
@@ -105,14 +109,17 @@ title: Comparison of entries
         <tr>
             <th>Executable</th>
             <th title="The number of unique obfuscation types that apply to the executable.">Obfuscation types</th>
-            {%- for item in site.mapping %}
+            {%- for item in site.mapping -%}
+            {%- if item[1].name != 'Character Substitution' and item[1].name != 'Quote Insertion' and item[1].name != 'Option Character Substitution' %}
             <th title="{{item[1].description | escape}}">{{item[1].name}}</th>
+            {%- endif -%}
             {%- endfor %}
         </tr>
     </thead>
     <tbody>
         {%- assign arrs = "" %}
 {%- for entries in site.executables -%}
+
     {%- assign page = entries.entries | first %}
     {% if page.platform == 'mac' %}
         {% capture name %}<td><a href="{{ entries.url | relative_url | replace: 'http:', 'https:'}}">{% include name page=page %}</a>{% if page.alias %} (and <code>{{page.alias| first}}</code>){% endif%}</td>{% endcapture %}
@@ -120,9 +127,11 @@ title: Comparison of entries
         {%- capture output -%}
         {%- assign item_count = 0%}
         {%- for item in site.mapping -%}
+        {%- if item[1].name != 'Character Substitution' and item[1].name != 'Quote Insertion' and item[1].name != 'Option Character Substitution' -%}
             {%- assign x = item[0] -%}
             {%- assign details = page.parameters.modifiers[x] -%}
             <td>{%if details%}{% if x!= "Sed" or details.SedStatements contains "s/a/" or details.SedStatements contains "s/A/" or details.SedStatements contains "s/s/" %}✅{% assign item_count = item_count | plus: 1 %}{%endif%}{%endif-%}</td>
+            {%- endif -%}
         {%- endfor -%}
         {%- endcapture -%}
 

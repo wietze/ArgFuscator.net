@@ -176,7 +176,7 @@ abstract class Modifier {
             if (token.toLowerCase() == 'powershell.exe' || token.toLowerCase() == 'powershell' || token.toLowerCase() == 'pwsh.exe' || token.toLowerCase() == 'pwsh')
                 logUserError("pattern-cmd", 'We will proceed with obfuscating the provided PowerShell command-line arguments, but not any PowerShell code, as this goes beyond the scope of this project - please checkout <a href="https://github.com/danielbohannon/Invoke-Obfuscation" target="_blank">Invoke-Obfuscation</a> for this!');
 
-            const shell = token.toLowerCase().match(/(ba|z|da)?sh/)
+            const shell = token.toLowerCase().match(/^(ba|z|da)sh$/)
             if (shell != null)
                 logUserError("pattern-cmd", `We will proceed with obfuscating the provided <code>${shell[0]}</code> command-line arguments, but not any <code>${shell[0]}</code> code, as this goes beyond the scope of this project. Please checkout e.g. <a href="https://github.com/Bashfuscator/Bashfuscator" target="_blank">Bashfuscator</a> for this!`);
 

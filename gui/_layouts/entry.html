@@ -14,10 +14,10 @@ It was found that on {{entry.operatingSystem | append: " " | append: entry.opera
     {%- assign details = entry.parameters.modifiers[x] -%}
     {%- if details -%}
     <li>
-        <strong>{{ item[1].name }}</strong>: {{ item[1].description }}{% if page.platform != 'windows' %}
-        {%- assign options = "" %}{% for argument in page.parameters.command offset:0%}{%for breakdown in argument%}{%if details.AppliesTo contains breakdown[0]%}{% assign options = options | append:breakdown[1] | append:"||"%}{%endif%}{%endfor%}{%endfor%}{% assign testcase = options | split: "||" | where_exp:'a','a' | sample %}
+        <strong>{{ item[1].name }}</strong>: {{ item[1].description }}{% if entry.platform != 'windows' %}
+        {%- assign options = "" %}{% for argument in entry.parameters.command offset:0%}{%for breakdown in argument%}{%if details.AppliesTo contains breakdown[0]%}{% assign options = options | append:breakdown[1] | append:"||"%}{%endif%}{%endfor%}{%endfor%}{% assign testcase = options | split: "||" | where_exp:'a','a' | sample %}
         {% else %}
-        {%- assign options = "" %}{% for argument in page.parameters.command offset:1%}{%for breakdown in argument%}{%if details.AppliesTo contains breakdown[0]%}{% assign options = options | append:breakdown[1] | append:"||"%}{%endif%}{%endfor%}{%endfor%}{% assign testcase = options | split: "||" | where_exp:'a','a' | sample %}
+        {%- assign options = "" %}{% for argument in entry.parameters.command offset:1%}{%for breakdown in argument%}{%if details.AppliesTo contains breakdown[0]%}{% assign options = options | append:breakdown[1] | append:"||"%}{%endif%}{%endfor%}{%endfor%}{% assign testcase = options | split: "||" | where_exp:'a','a' | sample %}
         {%endif%}
         <div class="collapsed">Example: <code>{{ testcase }}</code> is functionally equivalent to <code data-process="{{x}}">{{ testcase }}</code></div>
     </li>
