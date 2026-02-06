@@ -105,7 +105,7 @@ abstract class Modifier {
 
                 // Check for known argument match
                 let a = Modifier.GetArgDetails(Arguments, TokenContent)
-                if (TokenContent.length == 2 && a !== null) {
+                if (TokenContent.length == 2 && TokenContent[0] == '-' && a !== null) {
                     // Create existing find as new token
                     let t = new Token(TokenContent, a.ValueCount > 0);
                     Tokens.push(t);
@@ -212,7 +212,7 @@ abstract class Modifier {
             }
 
             if (_TokenText.match(/^(?:\\\\[^\\]+|[a-zA-Z]:|\.[\\/])((?:\\[^\\]+)+\\)?([^<>:]*)$/) || _TokenText.match(/^[^<>:]+\.[a-zA-Z0-9]{2,4}$/)) x.SetType('path'); // Windows file path format
-            if (_TokenText.match(/^\/[a-zA-Z0-9\-_ .]+\/[a-zA-Z0-9\-_\/ .]+$/)||_TokenText=="/tmp") x.SetType('path'); // Linux file path format
+            if (_TokenText.match(/^\/[a-zA-Z0-9\-_ .]+\/[a-zA-Z0-9\-_\/ .]+$/)||_TokenText.match(/^~\//)||_TokenText=="/tmp") x.SetType('path'); // Linux file path format
             if (_TokenText == '-') x.SetType('path') // stdin
             if (_TokenText.match(/^(HKLM|HKCC|HKCR|HKCU|HKU|HKEY_(LOCAL_MACHINE|CURRENT_CONFIG|CLASSES_ROOT|CURRENT_USER|USERS))\\?/i)) x.SetType('disabled'); // Windows Registry
             if (_TokenText.startsWith('http:') || _TokenText.startsWith('https:') || _TokenText.match(/[12]?\d?\d\.[12]?\d?\d\.[12]?\d?\d\.[12]?\d?\d/)) x.SetType('url'); //URLs (including IP addresses)

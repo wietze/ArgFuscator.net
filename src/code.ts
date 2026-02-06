@@ -92,7 +92,8 @@ function ApplyObfuscation(): void {
         }
     }
 
-    for(var attempts=0; attempts<3; attempts++){
+    const maxAttempts = 10
+    for (var attempts = 0; attempts < maxAttempts; attempts++) {
         const preObfuscation = LastTokenised.map(x => x.GetStringContent()).join(" ")
         LastTokenised?.forEach(Token => Token.Reset());
 
@@ -116,12 +117,19 @@ function ApplyObfuscation(): void {
         });
 
         const postObfuscation = LastTokenised.map(x => x.GetStringContent()).join(" ")
-        if(preObfuscation!=postObfuscation){
-            if(preObfuscation.toLowerCase() == postObfuscation.toLowerCase())
-                logUserError("pattern-no-options", "Other than upper/lower casing, it looks like nothing else was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", false);
+        if (preObfuscation != postObfuscation) {
+            if (preObfuscation.toLowerCase() == postObfuscation.toLowerCase()) {
+                if (attempts == maxAttempts - 1) {
+                    logUserError("pattern-no-options", "Other than upper/lower casing, it looks like nothing else was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", false);
+                }
+                else {
+                    continue
+                }
+            }
             return
         }
     }
+
     logUserError("pattern-no-options", "It looks like nothing was obfuscated compared to your original. Consider adding more command-line options to ensure there is enough to obfuscate.", true);
 }
 
