@@ -4,14 +4,19 @@ baseurl: ''
 collections:
   executables:
     output: true
+  entries:
+    output: true
 defaults:
   -
     values:
       layout: "entry"
-      # permalink: "executables/:slug.html"
     scope:
       path: "_executables/*"
-
+  -
+    values:
+      layout: "redirect"
+    scope:
+      path: "_entries/*"
 mapping:
   Sed:
     name: Character Substitution

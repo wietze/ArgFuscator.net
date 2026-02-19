@@ -27,7 +27,9 @@ description:
 
 -->
 {%- assign logo = '/assets/img/logo.svg' | relative_url %}
-{% capture title %}{% if page.layout == 'entry' %}{% include name page=page %}{% else %}{{ page.title }}{% endif %}{% endcapture -%}
+{% capture title %}{% if page.layout == 'entry' %}{% assign entry = page.entries | first %}{% include name page=entry %}{% else %}{{ page.title }}{% endif %}{% endcapture -%}
+
+
 <head>
     <title>{% if title != "" %}{{ title }} | {% endif %}{{ site.title }}</title>
 
